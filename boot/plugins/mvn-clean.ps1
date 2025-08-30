@@ -10,5 +10,3 @@ foreach ($project in $project_list)
 
     Set-Location "$init_runtime_path"
 }
-
-

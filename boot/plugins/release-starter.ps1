@@ -1,8 +1,8 @@
 $init_runtime_path = Get-Location
 $version_name = "3.0.0"
-$project_list = @("hdfk7-common-sdk", "hdfk7-common-sdk\hdfk7-base-proto", "hdfk7-common-sdk\hdfk7-common-proto")
+$project_list = @("hdfk7-code-generator", "hdfk7-boot-starter-discovery", "hdfk7-boot-starter-common")
 
-function Process-File
+function Signature-File
 {
     param(
         [string]$FileSource
@@ -55,15 +55,13 @@ foreach ($project in $project_list)
     Copy-File "target\$sources" (Join-Path $storage_path $sources)
 
     Set-Location $storage_path
-    Process-File $pom
-    Process-File $jar
-    Process-File $javadoc
-    Process-File $sources
+    Signature-File $pom
+    Signature-File $jar
+    Signature-File $javadoc
+    Signature-File $sources
 
     Set-Location "$staging_path"
     Compress-Archive -Path ".\*" -DestinationPath "$publishing_path\central-bundle.zip"
 
     Set-Location "$init_runtime_path"
 }
-
-
