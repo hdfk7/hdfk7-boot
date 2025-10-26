@@ -13,7 +13,7 @@
     <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-starter-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <name>hdfk7-boot-starter-parent</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
     <description>基于SpringBoot3搭建微服务架构下的项目框架</description>
@@ -40,10 +40,10 @@
     <properties>
         <java.version>21</java.version>
 
-        <spring-cloud.version>2023.0.5</spring-cloud.version>
-        <spring-cloud-alibaba.version>2023.0.3.3</spring-cloud-alibaba.version>
+        <spring-cloud.version>2023.0.6</spring-cloud.version>
+        <spring-cloud-alibaba.version>2023.0.3.4</spring-cloud-alibaba.version>
 
-        <redisson.version>3.45.1</redisson.version>
+        <redisson.version>3.52.0</redisson.version>
 
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
@@ -51,17 +51,17 @@
         <knife4j.version>4.5.0</knife4j.version>
         <swagger-annotations-jakarta.version>2.2.19</swagger-annotations-jakarta.version>
 
-        <mybatis-plus.version>3.5.11</mybatis-plus.version>
+        <mybatis-plus.version>3.5.14</mybatis-plus.version>
 
-        <hutool.version>5.8.37</hutool.version>
+        <hutool.version>5.8.41</hutool.version>
 
-        <skywalking.version>9.3.0</skywalking.version>
+        <skywalking.version>9.5.0</skywalking.version>
 
-        <jsonwebtoken.jjwt.version>0.12.6</jsonwebtoken.jjwt.version>
+        <jsonwebtoken.jjwt.version>0.13.0</jsonwebtoken.jjwt.version>
 
-        <xxl-job.version>3.0.0</xxl-job.version>
+        <xxl-job.version>3.2.0</xxl-job.version>
 
-        <commons-fileupload.version>1.5</commons-fileupload.version>
+        <commons-fileupload.version>1.6.0</commons-fileupload.version>
 
         <easyexcel.version>4.0.3</easyexcel.version>
     </properties>

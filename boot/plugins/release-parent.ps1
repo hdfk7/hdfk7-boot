@@ -1,5 +1,5 @@
 $init_runtime_path = Get-Location
-$version_name = "3.0.0"
+$version_name = "3.0.1"
 $project_list = @("hdfk7-boot-starter-parent")
 
 function Signature-File

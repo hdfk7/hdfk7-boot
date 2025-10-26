@@ -6,12 +6,12 @@
     <parent>
         <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-starter-parent</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <relativePath/>
     </parent>
 
     <artifactId>hdfk7-boot-starter-common</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <name>hdfk7-boot-starter-common</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
     <description>
@@ -38,7 +38,7 @@
     </scm>
 
     <properties>
-        <hdfk7-common-proto.version>3.0.0</hdfk7-common-proto.version>
+        <hdfk7-common-proto.version>3.0.1</hdfk7-common-proto.version>
     </properties>
 
     <dependencies>

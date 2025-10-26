@@ -25,11 +25,11 @@ GitHub - https://github.com/hdfk7/hdfk7-boot
 
 **依赖版本**
 
-* parent=>3.0.0
-* common=>3.0.0
-* discovery=>3.0.0
-* common-sdk=>3.0.0
-* generator=>3.0.0
+* parent=>3.0.1
+* common=>3.0.1
+* discovery=>3.0.1
+* common-sdk=>3.0.1
+* generator=>3.0.1
 
 **说明**
 

@@ -73,7 +73,7 @@ public abstract class AbstractLoadbalancerEventListener implements EventListener
                 }
             }
         });
-        thread.setName("nacos-loadbalancer-event-listener");
+        thread.setName("loadbalancer-event-listener");
         thread.start();
     }
 

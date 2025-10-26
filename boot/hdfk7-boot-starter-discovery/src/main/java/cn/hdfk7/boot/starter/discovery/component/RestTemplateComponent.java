@@ -1,4 +1,4 @@
-package cn.hdfk7.boot.starter.common.component;
+package cn.hdfk7.boot.starter.discovery.component;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,8 +13,8 @@ public class RestTemplateComponent {
 
     @Bean
     @LoadBalanced
-    @ConditionalOnMissingBean(value = {RestTemplate.class})
-    public RestTemplate restTemplate() {
+    @ConditionalOnMissingBean(value = {RestTemplate.class}, name = {"loadBalancedRestTemplate"})
+    public RestTemplate loadBalancedRestTemplate() {
         return new RestTemplate();
     }
 

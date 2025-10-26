@@ -5,18 +5,18 @@
     <parent>
         <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-starter-parent</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.1</version>
         <relativePath/>
     </parent>
 
     <groupId>cn.hdfk7.app</groupId>
     <artifactId>hdfk7-gateway</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <name>hdfk7-gateway</name>
 
     <properties>
-        <hdfk7-boot-starter-common.version>3.0.0</hdfk7-boot-starter-common.version>
-        <hdfk7-boot-starter-discovery.version>3.0.0</hdfk7-boot-starter-discovery.version>
+        <hdfk7-boot-starter-common.version>3.0.1</hdfk7-boot-starter-common.version>
+        <hdfk7-boot-starter-discovery.version>3.0.1</hdfk7-boot-starter-discovery.version>
 
         <spring-cloud-gateway-server.version>4.1.1</spring-cloud-gateway-server.version>
     </properties>
