@@ -1,8 +1,8 @@
 package cn.hdfk7.boot.starter.common.sentinel;
 
+import cn.hdfk7.boot.proto.base.result.ResultCode;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.csp.sentinel.adapter.gateway.sc.callback.BlockRequestHandler;
-import cn.hdfk7.boot.proto.base.result.ResultCode;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;

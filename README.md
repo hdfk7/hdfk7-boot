@@ -25,14 +25,14 @@ GitHub - https://github.com/hdfk7/hdfk7-boot
 
 **依赖版本**
 
-* parent=>3.0.1
-* common=>3.0.1
-* discovery=>3.0.1
-* common-sdk=>3.0.1
-* generator=>3.0.1
+* parent=>3.0.2
+* common=>3.0.2
+* discovery=>3.0.2
+* common-sdk=>3.0.2
+* generator=>3.0.2
 
 **说明**
 
-上述版本都是在skywalking9.3版本上适配的。
+上述版本都是在skywalking9.5版本上适配的。
 
 gateway特别配置，需要手动配置spring-cloud-starter-gateway版本为4.1.1及以下，不然skywalking不生效。

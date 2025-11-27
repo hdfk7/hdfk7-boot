@@ -3,8 +3,8 @@ package cn.hdfk7.boot.starter.common.component;
 import cn.hutool.core.date.SystemClock;
 import cn.hutool.core.util.ObjUtil;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.data.redis.core.RedisOperations;
@@ -16,12 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 @Component
 @ConditionalOnClass(value = {RedisOperations.class})
+@RequiredArgsConstructor
 public class SnowflakeComponent {
     @Value("${spring.application.name}")
     private String appName;
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动）

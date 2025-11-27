@@ -5,11 +5,11 @@ spring:
     nacos:
       discovery:
         username: username
-        username: username
+        password: password
         server-addr: ip:8848
       config:
         username: username
-        username: username
+        password: password
         server-addr: ip:8848
         file-extension: yaml
   config:
