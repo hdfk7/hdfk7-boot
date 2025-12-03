@@ -21,6 +21,7 @@ public class XxlJobComponent {
     public XxlJobSpringExecutor xxlJobSpringExecutor() {
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(xxlJobProperties.getAdminAddresses());
+        xxlJobSpringExecutor.setTimeout(xxlJobProperties.getTimeout());
         xxlJobSpringExecutor.setAppname(xxlJobProperties.getAppName());
         xxlJobSpringExecutor.setAddress(xxlJobProperties.getAddress());
         xxlJobSpringExecutor.setIp(xxlJobProperties.getIp());

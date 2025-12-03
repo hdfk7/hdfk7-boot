@@ -1,5 +1,5 @@
 $init_runtime_path = Get-Location
-$version_name = "3.0.2"
+$version_name = "3.0.3"
 $project_list = @("hdfk7-common-sdk", "hdfk7-common-sdk\hdfk7-base-proto", "hdfk7-common-sdk\hdfk7-common-proto")
 
 function Signature-File

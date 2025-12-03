@@ -5,13 +5,13 @@
     <parent>
         <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-starter-parent</artifactId>
-        <version>3.0.2</version>
+        <version>3.0.3</version>
         <relativePath/>
     </parent>
 
     <artifactId>hdfk7-code-generator</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.2</version>
+    <version>3.0.3</version>
     <name>hdfk7-code-generator</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
     <description>
@@ -34,7 +34,7 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/hdfk7/hdfk7-code-generator</url>
+        <url>https://github.com/hdfk7/hdfk7-boot</url>
     </scm>
 
     <dependencies>
