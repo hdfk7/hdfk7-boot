@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class XxlJobProperties {
     private String adminAddresses;
     private String accessToken;
+    private int timeout;
     private String appName;
     private String address;
     private String ip;
