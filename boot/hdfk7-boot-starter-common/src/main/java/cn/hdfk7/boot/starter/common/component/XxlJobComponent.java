@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 @Slf4j
-@Component
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(value = {XxlJobSpringExecutor.class})
 @RequiredArgsConstructor
 public class XxlJobComponent {

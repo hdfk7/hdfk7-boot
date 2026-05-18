@@ -8,10 +8,10 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.SpringConstraintValidatorFactory;
 
-@Component
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(value = {Validator.class, HibernateValidator.class, AutowireCapableBeanFactory.class})
 public class ValidatorComponent {
 

@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
-@Component
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(value = {MybatisPlusInterceptor.class, PaginationInnerInterceptor.class})
 @RequiredArgsConstructor
 public class MybatisPlusComponent {

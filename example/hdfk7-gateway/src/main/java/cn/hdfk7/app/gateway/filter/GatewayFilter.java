@@ -3,10 +3,12 @@ package cn.hdfk7.app.gateway.filter;
 import cn.hdfk7.app.gateway.component.properties.ApplicationProperties;
 import cn.hdfk7.boot.starter.common.constants.HttpHeaderConst;
 import cn.hutool.core.util.StrUtil;
+import io.micrometer.tracing.CurrentTraceContext;
+import io.micrometer.tracing.TraceContext;
+import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.skywalking.apm.toolkit.trace.TraceContext;
-import org.apache.skywalking.apm.toolkit.webflux.WebFluxSkyWalkingOperators;
+import org.jspecify.annotations.NonNull;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -18,26 +20,33 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class GatewayFilter implements GlobalFilter, Ordered {
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
-
     private final ApplicationProperties applicationProperties;
+    private final Tracer tracer;
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String traceId = WebFluxSkyWalkingOperators.continueTracing(exchange, TraceContext::traceId);
+    public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         URI requestUri = request.getURI();
         String schema = requestUri.getScheme();
         if (((!"http".equals(schema) && !"https".equals(schema))) || checkExcludeUri(request.getURI().getPath())) {
             return chain.filter(exchange);
         }
-        exchange = filling(exchange);
-        return returnMono(chain, exchange, traceId);
+        ServerWebExchange mutatedExchange = filling(exchange);
+        return Mono.deferContextual(contextView -> {
+            String traceId = Optional.of(tracer.currentTraceContext())
+                    .map(CurrentTraceContext::context)
+                    .map(TraceContext::traceId)
+                    .orElse("");
+            mutatedExchange.getResponse().getHeaders().set(HttpHeaderConst.TID, traceId);
+            return chain.filter(mutatedExchange);
+        });
     }
 
     private boolean checkExcludeUri(String uri) {
@@ -54,13 +63,8 @@ public class GatewayFilter implements GlobalFilter, Ordered {
         return exchange.mutate().request(host).build();
     }
 
-    private Mono<Void> returnMono(GatewayFilterChain chain, ServerWebExchange exchange, String traceId) {
-        exchange.getResponse().getHeaders().set(HttpHeaderConst.TID, traceId);
-        return chain.filter(exchange);
-    }
-
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        return Ordered.HIGHEST_PRECEDENCE + 5;
     }
 }

@@ -5,7 +5,8 @@ import cn.hdfk7.boot.proto.base.result.ResultCode;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
+import org.jspecify.annotations.NonNull;
+import org.springframework.boot.webflux.error.ErrorWebExceptionHandler;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
@@ -26,9 +26,8 @@ import java.util.Locale;
 @Order(-1)
 @Component
 public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
-    @NonNull
     @Override
-    public Mono<Void> handle(ServerWebExchange exchange, @NonNull Throwable e) {
+    public @NonNull Mono<Void> handle(ServerWebExchange exchange, @NonNull Throwable e) {
         ServerHttpResponse response = exchange.getResponse();
         ServerHttpRequest request = exchange.getRequest();
 

@@ -6,17 +6,17 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.13</version>
+        <version>4.0.6</version>
         <relativePath/>
     </parent>
 
     <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-starter-parent</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.3</version>
+    <version>4.0.0-SNAPSHOT</version>
     <name>hdfk7-boot-starter-parent</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
-    <description>基于SpringBoot3搭建微服务架构下的项目框架</description>
+    <description>基于SpringBoot4搭建微服务架构下的项目框架</description>
 
     <developers>
         <developer>
@@ -40,22 +40,19 @@
     <properties>
         <java.version>21</java.version>
 
-        <spring-cloud.version>2023.0.6</spring-cloud.version>
-        <spring-cloud-alibaba.version>2023.0.3.4</spring-cloud-alibaba.version>
+        <spring-cloud.version>2025.1.1</spring-cloud.version>
+        <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
 
-        <redisson.version>3.52.0</redisson.version>
+        <redisson.version>4.4.0</redisson.version>
 
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 
-        <knife4j.version>4.5.0</knife4j.version>
-        <swagger-annotations-jakarta.version>2.2.19</swagger-annotations-jakarta.version>
+        <swagger-models.version>2.2.50</swagger-models.version>
 
-        <mybatis-plus.version>3.5.14</mybatis-plus.version>
+        <mybatis-plus.version>3.5.16</mybatis-plus.version>
 
         <hutool.version>5.8.41</hutool.version>
-
-        <skywalking.version>9.5.0</skywalking.version>
 
         <jsonwebtoken.jjwt.version>0.13.0</jsonwebtoken.jjwt.version>
 
@@ -79,7 +76,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
 
         <dependency>
@@ -103,10 +100,7 @@
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok-mapstruct-binding</artifactId>
@@ -152,6 +146,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-bom</artifactId>
+                <version>${swagger-models.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.redisson</groupId>
@@ -181,24 +182,8 @@
             </dependency>
 
             <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations-jakarta</artifactId>
-                <version>${swagger-annotations-jakarta.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <dependency>
@@ -221,22 +206,6 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.skywalking</groupId>
-                <artifactId>apm-toolkit-logback-1.x</artifactId>
-                <version>${skywalking.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.skywalking</groupId>
-                <artifactId>apm-toolkit-trace</artifactId>
-                <version>${skywalking.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.skywalking</groupId>
-                <artifactId>apm-toolkit-webflux</artifactId>
-                <version>${skywalking.version}</version>
             </dependency>
 
             <dependency>
@@ -284,8 +253,14 @@
                             <artifactId>lombok</artifactId>
                         </path>
                         <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>${lombok-mapstruct-binding.version}</version>
+                        </path>
+                        <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

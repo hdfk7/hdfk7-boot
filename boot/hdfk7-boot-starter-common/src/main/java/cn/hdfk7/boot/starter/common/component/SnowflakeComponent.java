@@ -9,12 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-@Component
 @ConditionalOnClass(value = {RedisOperations.class})
 @RequiredArgsConstructor
 public class SnowflakeComponent {

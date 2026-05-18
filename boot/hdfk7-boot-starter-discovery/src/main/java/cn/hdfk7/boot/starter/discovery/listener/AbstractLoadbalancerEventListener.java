@@ -10,6 +10,7 @@ import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -43,7 +44,7 @@ public abstract class AbstractLoadbalancerEventListener implements EventListener
     protected NamingService naming;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(@NonNull ApplicationArguments args) throws Exception {
         nacosDiscoveryProperties = applicationContext.getBean(NacosDiscoveryProperties.class);
         nacosServiceManager = applicationContext.getBean(NacosServiceManager.class);
         nacosServiceDiscovery = applicationContext.getBean(NacosServiceDiscovery.class);

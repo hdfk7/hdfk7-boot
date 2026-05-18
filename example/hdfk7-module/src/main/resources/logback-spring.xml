@@ -3,14 +3,12 @@
     <springProperty name="spring.application.name" source="spring.application.name"/>
     <property name="log.home" value="/tmp/logs/app/${spring.application.name}"/>
     <property name="log.pattern"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${spring.application.name},%X{tid}] [%0.30thread] %0.30logger{30} :%msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${spring.application.name},%X{traceId:-}] [%0.30thread] %0.30logger{30} :%msg%n"/>
 
     <!-- 控制台输出 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
-                <pattern>${log.pattern}</pattern>
-            </layout>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
 
@@ -27,15 +25,15 @@
             <!--日志文件整体大小限制-->
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
-                <pattern>${log.pattern}</pattern>
-            </layout>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
 
     <!-- 异步输出 -->
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 确保调用者数据不丢失 -->
+        <includeCallerData>true</includeCallerData>
         <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
         <discardingThreshold>0</discardingThreshold>
         <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->

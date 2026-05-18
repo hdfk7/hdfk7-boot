@@ -5,20 +5,18 @@
     <parent>
         <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-starter-parent</artifactId>
-        <version>3.0.3</version>
+        <version>4.0.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>cn.hdfk7.app</groupId>
     <artifactId>hdfk7-gateway</artifactId>
-    <version>3.0.3</version>
+    <version>4.0.0-SNAPSHOT</version>
     <name>hdfk7-gateway</name>
 
     <properties>
-        <hdfk7-boot-starter-common.version>3.0.3</hdfk7-boot-starter-common.version>
-        <hdfk7-boot-starter-discovery.version>3.0.3</hdfk7-boot-starter-discovery.version>
-
-        <spring-cloud-gateway-server.version>4.1.1</spring-cloud-gateway-server.version>
+        <hdfk7-boot-starter-common.version>4.0.0-SNAPSHOT</hdfk7-boot-starter-common.version>
+        <hdfk7-boot-starter-discovery.version>4.0.0-SNAPSHOT</hdfk7-boot-starter-discovery.version>
     </properties>
 
     <dependencies>
@@ -35,12 +33,7 @@
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-gateway-server</artifactId>
-            <version>${spring-cloud-gateway-server.version}</version>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
 
         <dependency>
@@ -58,21 +51,12 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.skywalking</groupId>
-            <artifactId>apm-toolkit-logback-1.x</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-opentelemetry</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.skywalking</groupId>
-            <artifactId>apm-toolkit-trace</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.skywalking</groupId>
-            <artifactId>apm-toolkit-webflux</artifactId>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
     </dependencies>
 
