@@ -1,5 +1,7 @@
 $init_runtime_path = Get-Location
-$version_name = "4.0.0-SNAPSHOT"
+$maven_config_path = Join-Path (Resolve-Path "$PSScriptRoot\..\..") ".mvn\maven.config"
+$revision_line = Get-Content $maven_config_path | Where-Object { $_ -like "-Drevision=*" } | Select-Object -First 1
+$version_name = $revision_line -replace "^-Drevision=", ""
 $project_list = @("hdfk7-common-sdk", "hdfk7-common-sdk\hdfk7-base-proto", "hdfk7-common-sdk\hdfk7-common-proto")
 
 function Signature-File
@@ -31,6 +33,34 @@ function Copy-File
     }
 }
 
+function Copy-Release-Pom
+{
+    param(
+        [string]$PomSource,
+        [string]$PomDestination
+    )
+    $utf8 = New-Object System.Text.UTF8Encoding $false
+    $content = [System.IO.File]::ReadAllText((Resolve-Path $PomSource), [System.Text.Encoding]::UTF8)
+    $content = $content.Replace('${revision}', $version_name)
+    [System.IO.File]::WriteAllText($PomDestination, $content, $utf8)
+}
+
+function Install-Release-Artifact
+{
+    param(
+        [string]$ReleasePom,
+        [string]$JarFile
+    )
+    if (Test-Path -Path $JarFile -PathType Leaf)
+    {
+        mvn install:install-file "-Dfile=$JarFile" "-DpomFile=$ReleasePom"
+    }
+    else
+    {
+        mvn install:install-file "-Dfile=$ReleasePom" "-DpomFile=$ReleasePom" "-Dpackaging=pom"
+    }
+}
+
 foreach ($project in $project_list)
 {
     $project_parts = $project -split "\\"
@@ -49,7 +79,9 @@ foreach ($project in $project_list)
     mvn clean install
     New-Item -ItemType Directory -Force -Path "$publishing_path"
     New-Item -ItemType Directory -Force -Path $storage_path
-    Copy-File "pom.xml" (Join-Path $storage_path $pom)
+    $release_pom_path = Join-Path $storage_path $pom
+    Copy-Release-Pom "pom.xml" $release_pom_path
+    Install-Release-Artifact $release_pom_path "target\$jar"
     Copy-File "target\$jar" (Join-Path $storage_path $jar)
     Copy-File "target\$javadoc" (Join-Path $storage_path $javadoc)
     Copy-File "target\$sources" (Join-Path $storage_path $sources)

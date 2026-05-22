@@ -6,12 +6,12 @@
     <parent>
         <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-starter-parent</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
-        <relativePath/>
+        <version>${revision}</version>
+        <relativePath>../../hdfk7-boot-starter-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>hdfk7-base-proto</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>hdfk7-base-proto</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
     <description>

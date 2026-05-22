@@ -5,30 +5,27 @@
     <parent>
         <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-starter-parent</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
-        <relativePath/>
+        <version>${revision}</version>
+        <relativePath>../../boot/hdfk7-boot-starter-parent/pom.xml</relativePath>
     </parent>
 
     <groupId>cn.hdfk7.app</groupId>
     <artifactId>hdfk7-gateway</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>hdfk7-gateway</name>
 
     <properties>
-        <hdfk7-boot-starter-common.version>4.0.0-SNAPSHOT</hdfk7-boot-starter-common.version>
-        <hdfk7-boot-starter-discovery.version>4.0.0-SNAPSHOT</hdfk7-boot-starter-discovery.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>cn.hdfk7.boot</groupId>
             <artifactId>hdfk7-boot-starter-common</artifactId>
-            <version>${hdfk7-boot-starter-common.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.hdfk7.boot</groupId>
             <artifactId>hdfk7-boot-starter-discovery</artifactId>
-            <version>${hdfk7-boot-starter-discovery.version}</version>
         </dependency>
 
         <dependency>

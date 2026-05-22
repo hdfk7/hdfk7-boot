@@ -6,12 +6,12 @@
     <parent>
         <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-starter-parent</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
-        <relativePath/>
+        <version>${revision}</version>
+        <relativePath>../../hdfk7-boot-starter-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>hdfk7-common-proto</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <name>hdfk7-common-proto</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
     <description>
@@ -37,15 +37,11 @@
         <url>https://github.com/hdfk7/hdfk7-boot</url>
     </scm>
 
-    <properties>
-        <hdfk7-base-proto.version>4.0.0-SNAPSHOT</hdfk7-base-proto.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>cn.hdfk7.boot</groupId>
             <artifactId>hdfk7-base-proto</artifactId>
-            <version>${hdfk7-base-proto.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
