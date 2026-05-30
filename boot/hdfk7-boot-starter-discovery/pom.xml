@@ -4,19 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.hdfk7.boot</groupId>
-        <artifactId>hdfk7-boot-starter-parent</artifactId>
+        <groupId>cn.hdfk7</groupId>
+        <artifactId>hdfk7-boot-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../hdfk7-boot-starter-parent/pom.xml</relativePath>
+        <relativePath>../hdfk7-boot-parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>hdfk7-boot-starter-discovery</artifactId>
     <name>hdfk7-boot-starter-discovery</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
-    <description>
-        基于nacos实现的服务发现、配置中心功能，提供服务上下线立即同步刷新路由缓存的能力。
-    </description>
-
+    <description>基于nacos实现的服务发现、配置中心功能，提供服务上下线立即同步刷新路由缓存的能力。</description>
     <developers>
         <developer>
             <name>qiang.liang</name>
@@ -63,8 +60,25 @@
         </dependency>
 
         <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webflux-scalar</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -83,6 +97,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -102,5 +117,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

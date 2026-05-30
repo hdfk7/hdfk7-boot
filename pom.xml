@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.hdfk7.boot</groupId>
+    <groupId>cn.hdfk7</groupId>
     <artifactId>hdfk7-boot</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
@@ -15,9 +15,9 @@
     </properties>
 
     <modules>
-        <module>boot/hdfk7-boot-starter-parent</module>
-        <module>boot/hdfk7-common-sdk</module>
-        <module>boot/hdfk7-code-generator</module>
+        <module>boot/hdfk7-boot-parent</module>
+        <module>boot/hdfk7-boot-proto</module>
+        <module>boot/hdfk7-boot-starter-code-generator</module>
         <module>boot/hdfk7-boot-starter-common</module>
         <module>boot/hdfk7-boot-starter-discovery</module>
         <module>example</module>

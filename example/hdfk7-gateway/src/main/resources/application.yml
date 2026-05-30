@@ -15,3 +15,9 @@ spring:
   config:
     import:
       - nacos:${spring.application.name}?refreshEnabled=true
+springdoc:
+  api-docs:
+    enabled: true
+scalar:
+  discovery:
+    enabled: true

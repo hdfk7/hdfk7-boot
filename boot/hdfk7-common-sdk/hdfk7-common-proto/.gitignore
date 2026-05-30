@@ -1,7 +1,0 @@
-.idea/*
-build/*
-target/*
-*.iml
-*/target/*
-*/*.iml
-.DS_Store

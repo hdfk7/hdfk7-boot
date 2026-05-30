@@ -38,5 +38,4 @@ public class CodeGenerator {
                 .templateEngine(new FreemarkerTemplateEngine())
                 .execute();
     }
-
 }

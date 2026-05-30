@@ -15,3 +15,14 @@ spring:
   config:
     import:
       - nacos:${spring.application.name}?refreshEnabled=true
+springdoc:
+  api-docs:
+    enabled: true
+  open-api:
+    info:
+      version: 1.0.0
+      description: "[${spring.application.name}]接口文档"
+  group-configs:
+    - group: "默认分组"
+      paths-to-match:
+        - /**

@@ -11,4 +11,3 @@ public interface HttpHeaderConst {
     String UNKNOWN = "unknown";
     String TID = "TID";
 }
-

@@ -2,7 +2,7 @@ $init_runtime_path = Get-Location
 $maven_config_path = Join-Path (Resolve-Path "$PSScriptRoot\..\..") ".mvn\maven.config"
 $revision_line = Get-Content $maven_config_path | Where-Object { $_ -like "-Drevision=*" } | Select-Object -First 1
 $version_name = $revision_line -replace "^-Drevision=", ""
-$project_list = @("hdfk7-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery")
+$project_list = @("hdfk7-boot-starter-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery")
 
 function Signature-File
 {
@@ -69,7 +69,7 @@ foreach ($project in $project_list)
     $runtime_path = "$( Get-Location )\$project"
     $staging_path = "$runtime_path\target\central-staging"
     $publishing_path = "$runtime_path\target\central-publishing"
-    $storage_path = "$staging_path\cn\hdfk7\boot\$project_name\$version_name"
+    $storage_path = "$staging_path\cn\hdfk7\$project_name\$version_name"
     $pom = "$project_name-$version_name.pom"
     $jar = "$project_name-$version_name.jar"
     $javadoc = "$project_name-$version_name-javadoc.jar"

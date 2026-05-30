@@ -43,6 +43,11 @@
     </appender>
 
     <logger name="cn.hdfk7" level="DEBUG"/>
+    <logger name="com.alibaba.cloud.sentinel" level="WARN"/>
+    <logger name="com.alibaba.csp" level="WARN"/>
+    <logger name="com.alibaba.nacos" level="WARN"/>
+    <logger name="com.alibaba.nacos.client.naming" level="ERROR"/>
+    <logger name="org.springframework.cloud.commons.util.InetUtils" level="WARN"/>
 
     <!-- 日志输出级别 -->
     <root level="INFO">

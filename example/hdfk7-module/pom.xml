@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.hdfk7.boot</groupId>
-        <artifactId>hdfk7-boot-starter-parent</artifactId>
+        <groupId>cn.hdfk7</groupId>
+        <artifactId>hdfk7-boot-parent</artifactId>
         <version>${revision}</version>
-        <relativePath>../../boot/hdfk7-boot-starter-parent/pom.xml</relativePath>
+        <relativePath>../../boot/hdfk7-boot-parent/pom.xml</relativePath>
     </parent>
 
     <groupId>cn.hdfk7.app</groupId>
@@ -20,17 +20,23 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.hdfk7.boot</groupId>
+            <groupId>cn.hdfk7</groupId>
             <artifactId>hdfk7-boot-starter-common</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>cn.hdfk7.boot</groupId>
+            <groupId>cn.hdfk7</groupId>
             <artifactId>hdfk7-boot-starter-discovery</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-scalar</artifactId>
         </dependency>
 
         <dependency>
@@ -47,10 +53,12 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-jsqlparser</artifactId>
@@ -70,14 +78,21 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-opentelemetry</artifactId>
         </dependency>
+
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>cn.hdfk7.boot</groupId>
-            <artifactId>hdfk7-code-generator</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hdfk7</groupId>
+            <artifactId>hdfk7-boot-starter-code-generator</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -88,6 +103,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -103,6 +119,7 @@
                     <include>**/*.xml</include>
                 </includes>
             </resource>
+
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
@@ -111,5 +128,4 @@
             </resource>
         </resources>
     </build>
-
 </project>
