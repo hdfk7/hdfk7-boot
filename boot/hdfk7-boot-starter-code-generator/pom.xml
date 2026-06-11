@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
     <name>hdfk7-boot-starter-code-generator</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
-    <description>基于mybatis-plus提供的代码生成器整合的依赖</description>
+    <description>MyBatis-Plus Generator 代码生成依赖聚合，不提供自动配置，推荐仅在开发或测试阶段引入。</description>
     <developers>
         <developer>
             <name>qiang.liang</name>

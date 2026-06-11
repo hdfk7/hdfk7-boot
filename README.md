@@ -71,7 +71,7 @@
 </dependency>
 ```
 
-代码生成器推荐使用 `test` scope：
+代码生成器 starter 仅聚合 MyBatis-Plus Generator、Freemarker 和数据库驱动等依赖，不提供自动配置。推荐在业务工程中使用 `test` scope 引入，并按项目实际数据库、包名、表名编写生成入口：
 
 ```xml
 <dependency>
@@ -80,6 +80,8 @@
     <scope>test</scope>
 </dependency>
 ```
+
+示例入口可参考 `example/hdfk7-module/src/test/java/cn/hdfk7/app/module/CodeGenerator.java`。
 
 ## 示例工程
 
