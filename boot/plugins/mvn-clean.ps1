@@ -1,12 +1,12 @@
-$init_runtime_path = Get-Location
-$project_list = @("hdfk7-boot-parent", "hdfk7-boot-proto\hdfk7-boot-base-proto", "hdfk7-boot-starter-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery")
+$InitialLocation = Get-Location
+$Projects = @("hdfk7-boot-parent", "hdfk7-boot-proto\hdfk7-boot-base-proto", "hdfk7-boot-starter-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery")
 
-foreach ($project in $project_list)
+foreach ($Project in $Projects)
 {
-    $runtime_path = "$( Get-Location )\$project"
+    $RuntimePath = Join-Path $InitialLocation $Project
 
-    Set-Location "$runtime_path"
+    Set-Location "$RuntimePath"
     mvn clean
 
-    Set-Location "$init_runtime_path"
+    Set-Location "$InitialLocation"
 }
