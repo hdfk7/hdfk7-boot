@@ -6,7 +6,7 @@
 
 ## 一、项目定位
 
-`hdfk7-boot` 是一套基于 `Spring Boot 4.0.6`、`Spring Cloud 2025.1.1`、`Spring Cloud Alibaba 2025.1.0.0` 和 `Java 21` 构建的微服务项目脚手架与 starter 集合。
+`hdfk7-boot` 是一套基于 `Spring Boot 4.0.7`、`Spring Cloud 2025.1.1`、`Spring Cloud Alibaba 2025.1.0.0` 和 `Java 21` 构建的微服务项目脚手架与 starter 集合。
 
 它不是单一业务系统，而是一个基础框架工程，主要解决三类问题：
 

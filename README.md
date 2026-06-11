@@ -40,7 +40,7 @@
 
 | 依赖 | 版本 |
 | --- | --- |
-| Spring Boot | `4.0.6` |
+| Spring Boot | `4.0.7` |
 | Spring Cloud | `2025.1.1` |
 | Spring Cloud Alibaba | `2025.1.0.0` |
 | Java | `21` |
