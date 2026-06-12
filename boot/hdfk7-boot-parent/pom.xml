@@ -65,6 +65,11 @@
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+        <kotlin.version>2.2.21</kotlin.version>
+        <native-build-tools-plugin.version>0.11.5</native-build-tools-plugin.version>
+        <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
+        <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
+        <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
     </properties>
 
     <dependencies>
@@ -264,6 +269,32 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${kotlin.version}</version>
+                    <configuration>
+                        <jvmTarget>${java.version}</jvmTarget>
+                        <javaParameters>true</javaParameters>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>test-compile</id>
+                            <phase>test-compile</phase>
+                            <goals>
+                                <goal>test-compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven-compiler-plugin.version}</version>
@@ -361,6 +392,51 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>org.graalvm.buildtools</groupId>
+                    <artifactId>native-maven-plugin</artifactId>
+                    <version>${native-build-tools-plugin.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+
+                <plugin>
+                    <groupId>io.github.git-commit-id</groupId>
+                    <artifactId>git-commit-id-maven-plugin</artifactId>
+                    <version>${git-commit-id-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <verbose>true</verbose>
+                        <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                        <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.cyclonedx</groupId>
+                    <artifactId>cyclonedx-maven-plugin</artifactId>
+                    <version>${cyclonedx-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>makeAggregateBom</goal>
+                            </goals>
+                            <configuration>
+                                <projectType>application</projectType>
+                                <outputDirectory>${project.build.outputDirectory}/META-INF/sbom</outputDirectory>
+                                <outputFormat>json</outputFormat>
+                                <outputName>application.cdx</outputName>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                     <version>${spring-boot.version}</version>
@@ -375,6 +451,67 @@
                     <configuration>
                         <mainClass>${spring-boot.run.main-class}</mainClass>
                     </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven-shade-plugin.version}</version>
+                    <configuration>
+                        <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+                        <createDependencyReducedPom>true</createDependencyReducedPom>
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                            </filter>
+                        </filters>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-maven-plugin</artifactId>
+                            <version>${spring-boot.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <transformers>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>META-INF/spring.handlers</resource>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>META-INF/spring.schemas</resource>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</resource>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                        <resource>META-INF/spring/org.springframework.boot.actuate.autoconfigure.web.ManagementContextConfiguration.imports</resource>
+                                    </transformer>
+                                    <transformer implementation="org.springframework.boot.maven.PropertiesMergingResourceTransformer">
+                                        <resource>META-INF/spring.factories</resource>
+                                    </transformer>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>${start-class}</mainClass>
+                                        <manifestEntries>
+                                            <Multi-Release>true</Multi-Release>
+                                        </manifestEntries>
+                                    </transformer>
+                                </transformers>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -435,4 +572,113 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-jar-plugin</artifactId>
+                            <configuration>
+                                <archive>
+                                    <manifestEntries>
+                                        <Spring-Boot-Native-Processed>true</Spring-Boot-Native-Processed>
+                                    </manifestEntries>
+                                </archive>
+                            </configuration>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>process-aot</id>
+                                    <goals>
+                                        <goal>process-aot</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.graalvm.buildtools</groupId>
+                            <artifactId>native-maven-plugin</artifactId>
+                            <configuration>
+                                <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                                <exclusions>
+                                    <exclusion>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-devtools</artifactId>
+                                    </exclusion>
+                                </exclusions>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>add-reachability-metadata</id>
+                                    <goals>
+                                        <goal>add-reachability-metadata</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <id>nativeTest</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.junit.platform</groupId>
+                    <artifactId>junit-platform-launcher</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>process-test-aot</id>
+                                    <goals>
+                                        <goal>process-test-aot</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.graalvm.buildtools</groupId>
+                            <artifactId>native-maven-plugin</artifactId>
+                            <configuration>
+                                <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                                <exclusions>
+                                    <exclusion>
+                                        <groupId>org.springframework.boot</groupId>
+                                        <artifactId>spring-boot-devtools</artifactId>
+                                    </exclusion>
+                                </exclusions>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>native-test</id>
+                                    <goals>
+                                        <goal>test</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>
