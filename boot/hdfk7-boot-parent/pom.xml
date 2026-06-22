@@ -42,7 +42,7 @@
         <spring-cloud.version>2025.1.2</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
 
-        <redisson.version>4.5.0</redisson.version>
+        <redisson.version>4.6.1</redisson.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <swagger-models.version>2.2.50</swagger-models.version>
@@ -55,19 +55,19 @@
         <easyexcel.version>4.0.3</easyexcel.version>
 
         <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
-        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
-        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
-        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
         <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
-        <kotlin.version>2.2.21</kotlin.version>
-        <native-build-tools-plugin.version>0.11.5</native-build-tools-plugin.version>
-        <git-commit-id-maven-plugin.version>9.0.2</git-commit-id-maven-plugin.version>
+        <kotlin.version>2.4.0</kotlin.version>
+        <native-build-tools-plugin.version>1.1.2</native-build-tools-plugin.version>
+        <git-commit-id-maven-plugin.version>10.0.0</git-commit-id-maven-plugin.version>
         <cyclonedx-maven-plugin.version>2.9.2</cyclonedx-maven-plugin.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
     </properties>

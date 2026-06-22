@@ -1,4 +1,4 @@
-# 基于 Spring Boot 4 和 Spring Cloud 2025 的微服务基础框架 hdfk7-boot
+# 基于 Spring Boot 4.1.0 和 Spring Cloud 2025.1.2 的微服务基础框架 hdfk7-boot
 
 在微服务项目落地时，最耗时间的往往不是业务代码，而是基础能力的重复整合：父 POM 版本管理、注册中心、配置中心、网关、OpenFeign、统一返回、异常处理、日志切面、限流降级、分布式 ID、MyBatis-Plus、接口文档等。
 
@@ -6,7 +6,7 @@
 
 ## 一、项目定位
 
-`hdfk7-boot` 是一套基于 `Spring Boot 4.0.7`、`Spring Cloud 2025.1.1`、`Spring Cloud Alibaba 2025.1.0.0` 和 `Java 21` 构建的微服务项目脚手架与 starter 集合。
+`hdfk7-boot` 是一套基于 `Spring Boot 4.1.0`、`Spring Cloud 2025.1.2`、`Spring Cloud Alibaba 2025.1.0.0` 和 `Java 21` 构建的微服务项目脚手架与 starter 集合。
 
 它不是单一业务系统，而是一个基础框架工程，主要解决三类问题：
 
@@ -22,8 +22,8 @@
 
 | 类型 | 技术 |
 | --- | --- |
-| 基础框架 | Spring Boot 4 |
-| 微服务体系 | Spring Cloud 2025 |
+| 基础框架 | Spring Boot 4.1.0 |
+| 微服务体系 | Spring Cloud 2025.1.2 |
 | 服务注册与配置 | Nacos |
 | 网关 | Spring Cloud Gateway WebFlux |
 | 服务调用 | OpenFeign、LoadBalancer |
@@ -308,7 +308,7 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 
 第五，兼容较新的技术版本。
 
-项目基于 Spring Boot 4、Spring Cloud 2025 和 Java 21，适合用来探索新版本微服务项目的基础搭建方式。
+项目基于 Spring Boot 4.1.0、Spring Cloud 2025.1.2 和 Java 21，适合用来探索新版本微服务项目的基础搭建方式。
 
 ## 十二、适用场景
 
@@ -319,7 +319,7 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 3. 项目需要 Nacos、Gateway、OpenFeign、Sentinel 等微服务组件；
 4. 团队希望沉淀自己的基础 starter；
 5. 希望普通服务和网关服务有统一的异常、日志、限流返回格式；
-6. 需要一个可参考的 Spring Boot 4 微服务工程模板。
+6. 需要一个可参考的 Spring Boot 4.1.0 微服务工程模板。
 
 ## 十三、总结
 
@@ -327,4 +327,4 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 
 对于业务项目来说，它的价值不是替代业务架构，而是把通用技术底座先搭好，让业务服务可以用更低成本接入微服务体系。
 
-如果你正在搭建基于 Spring Boot 4 和 Spring Cloud 2025 的微服务项目，这个项目可以作为一个不错的参考模板。
+如果你正在搭建基于 Spring Boot 4.1.0 和 Spring Cloud 2025.1.2 的微服务项目，这个项目可以作为一个不错的参考模板。
