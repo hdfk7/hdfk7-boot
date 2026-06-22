@@ -28,7 +28,7 @@
 | 网关 | Spring Cloud Gateway WebFlux |
 | 服务调用 | OpenFeign、LoadBalancer |
 | 限流降级 | Sentinel |
-| 数据访问 | MyBatis-Plus |
+| 数据访问 | MyBatis-Plus、ShardingSphere JDBC |
 | 缓存与分布式能力 | Redis、Redisson |
 | 消息队列 | Kafka、RabbitMQ |
 | 接口文档 | Springdoc OpenAPI、Scalar |
@@ -49,6 +49,7 @@
 | `hdfk7-boot-starter-common` | 通用自动配置和公共组件 |
 | `hdfk7-boot-starter-discovery` | 注册中心、配置中心、OpenFeign、网关、OpenAPI 聚合配置 |
 | `hdfk7-boot-starter-code-generator` | MyBatis-Plus Generator 代码生成依赖聚合 |
+| `hdfk7-boot-starter-shardingsphere` | ShardingSphere JDBC 运行时依赖聚合与 DataSource 自动配置 |
 | `hdfk7-gateway` | 网关示例工程 |
 | `hdfk7-module` | 普通 Web 服务示例工程 |
 
@@ -286,7 +287,33 @@ example/hdfk7-module/src/test/java/cn/hdfk7/app/module/CodeGenerator.java
 
 这种设计比较合理，因为代码生成器通常只在开发期使用，不应该污染线上运行时依赖。
 
-## 十一、项目亮点
+## 十一、ShardingSphere 依赖聚合
+
+`hdfk7-boot-starter-shardingsphere` 是一个运行时依赖聚合与自动配置模块，主要聚合：
+
+- ShardingSphere JDBC
+- ShardingSphere Sharding Core
+- MySQL SQL Parser Engine
+- Hikari 数据源池适配
+- Standalone Memory Repository
+- Simple Authority
+
+它在存在 `spring.shardingsphere.raw` 配置时自动创建 `DataSource`，业务工程只需要保留 YAML 配置，并把分散的 ShardingSphere 依赖替换成一个 starter：
+
+```xml
+<dependency>
+    <groupId>cn.hdfk7</groupId>
+    <artifactId>hdfk7-boot-starter-shardingsphere</artifactId>
+</dependency>
+```
+
+starter 内置半年分表算法，业务配置中的 `algorithmClassName` 可以改为：
+
+```yaml
+algorithmClassName: cn.hdfk7.boot.starter.shardingsphere.algorithm.HalfYearRangeShardingAlgorithm
+```
+
+## 十二、项目亮点
 
 我认为这个项目有几个值得借鉴的设计点。
 
@@ -310,7 +337,7 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 
 项目基于 Spring Boot 4.1.0、Spring Cloud 2025.1.2 和 Java 21，适合用来探索新版本微服务项目的基础搭建方式。
 
-## 十二、适用场景
+## 十三、适用场景
 
 `hdfk7-boot` 比较适合以下场景：
 
@@ -321,7 +348,7 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 5. 希望普通服务和网关服务有统一的异常、日志、限流返回格式；
 6. 需要一个可参考的 Spring Boot 4.1.0 微服务工程模板。
 
-## 十三、总结
+## 十四、总结
 
 `hdfk7-boot` 本质上是一套面向微服务项目的基础框架，它把项目初始化阶段最常见、最重复的基础能力进行了封装，包括父 POM 版本管理、公共模型、统一异常、分布式 ID、MyBatis-Plus、Nacos、OpenFeign、Gateway、Sentinel、接口文档和代码生成器等。
 

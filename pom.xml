@@ -18,6 +18,7 @@
         <module>boot/hdfk7-boot-parent</module>
         <module>boot/hdfk7-boot-proto</module>
         <module>boot/hdfk7-boot-starter-code-generator</module>
+        <module>boot/hdfk7-boot-starter-shardingsphere</module>
         <module>boot/hdfk7-boot-starter-common</module>
         <module>boot/hdfk7-boot-starter-discovery</module>
         <module>example</module>
