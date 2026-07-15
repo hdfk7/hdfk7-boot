@@ -1,9 +1,6 @@
 package cn.hdfk7.boot.starter.discovery.filter;
 
 import cn.hdfk7.boot.starter.discovery.properties.AppProperties;
-import io.micrometer.tracing.CurrentTraceContext;
-import io.micrometer.tracing.TraceContext;
-import io.micrometer.tracing.Tracer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -18,7 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +23,6 @@ public abstract class AbstractGatewayFilter implements GlobalFilter, Ordered {
     protected static final int ORDER = Ordered.HIGHEST_PRECEDENCE + 5;
 
     protected final AppProperties appProperties;
-    protected final Tracer tracer;
 
     @Override
     public @NonNull Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull GatewayFilterChain chain) {
@@ -37,17 +32,13 @@ public abstract class AbstractGatewayFilter implements GlobalFilter, Ordered {
         }
 
         ServerWebExchange mutatedExchange = this.filling(exchange);
-        return Mono.deferContextual(contextView -> {
-            mutatedExchange.getResponse().getHeaders().set(traceIdHeaderName(), traceId());
-            return chain.filter(mutatedExchange);
-        });
+        return Mono.deferContextual(contextView -> chain.filter(mutatedExchange));
     }
 
     protected boolean shouldFilter(ServerHttpRequest request) {
         URI requestUri = request.getURI();
         String schema = requestUri.getScheme();
-        return ("http".equals(schema) || "https".equals(schema))
-                && !checkExcludeUri(requestUri.getPath());
+        return ("http".equals(schema) || "https".equals(schema)) && !checkExcludeUri(requestUri.getPath());
     }
 
     protected boolean checkExcludeUri(String uri) {
@@ -65,17 +56,6 @@ public abstract class AbstractGatewayFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .build();
         return exchange.mutate().request(request).build();
-    }
-
-    protected String traceId() {
-        return Optional.of(tracer.currentTraceContext())
-                .map(CurrentTraceContext::context)
-                .map(TraceContext::traceId)
-                .orElse("");
-    }
-
-    protected String traceIdHeaderName() {
-        return "TID";
     }
 
     @Override

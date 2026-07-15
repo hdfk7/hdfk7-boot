@@ -75,12 +75,6 @@
             <artifactId>springdoc-openapi-starter-webflux-scalar</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-tracing</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <build>
