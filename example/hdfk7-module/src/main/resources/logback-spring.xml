@@ -17,6 +17,7 @@
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.home}/${HOSTNAME}.log</file>
+        <immediateFlush>false</immediateFlush>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${log.home}/${HOSTNAME}.%d{yyyyMMddHH}.%i.log</fileNamePattern>
@@ -27,7 +28,6 @@
 
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${log.pattern}</pattern>
-            <immediateFlush>true</immediateFlush>
         </encoder>
     </appender>
 
