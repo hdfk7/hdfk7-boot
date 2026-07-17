@@ -20,8 +20,8 @@
         <immediateFlush>false</immediateFlush>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/${HOSTNAME}.%d{yyyyMMddHH}.%i.log</fileNamePattern>
-            <maxHistory>7</maxHistory>
+            <fileNamePattern>${log.home}/${HOSTNAME}.%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
+            <maxHistory>2</maxHistory>
             <maxFileSize>500MB</maxFileSize>
             <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
@@ -33,7 +33,7 @@
 
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <queueSize>8192</queueSize>
-        <discardingThreshold>0</discardingThreshold>
+        <discardingThreshold>20</discardingThreshold>
         <neverBlock>false</neverBlock>
         <includeCallerData>true</includeCallerData>
         <appender-ref ref="FILE"/>
