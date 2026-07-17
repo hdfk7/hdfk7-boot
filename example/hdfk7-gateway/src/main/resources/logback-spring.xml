@@ -4,7 +4,7 @@
                     name="appName"
                     source="spring.application.name"/>
 
-    <property name="log.home" value="/tmp/logs/app/${appName}"/>
+    <property name="log.home" value="/app/logs"/>
 
     <property name="log.pattern"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${appName}] [%thread] [trace:%X{trace_id},span:%X{span_id}] %logger{36} - %msg%n"/>
