@@ -7,7 +7,7 @@
     <property name="log.home" value="/tmp/logs/app/${appName}"/>
 
     <property name="log.pattern"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [${appName}] [trace:%X{trace_id},span:%X{span_id}] %logger{36} - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${appName}] [%thread] [trace:%X{trace_id},span:%X{span_id}] %logger{36} - %msg%n"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
