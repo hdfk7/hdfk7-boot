@@ -4,7 +4,7 @@
                     name="appName"
                     source="spring.application.name"/>
 
-    <property name="log.home" value="/app/logs"/>
+    <property name="log.home" value="${LOG_HOME:-/app/logs}"/>
 
     <property name="log.pattern"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${appName}] [%thread] [trace:%X{trace_id},span:%X{span_id}] %logger{36} - %msg%n"/>
@@ -16,11 +16,11 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.home}/${HOSTNAME}.log</file>
+        <file>${log.home}/${appName}/${HOSTNAME}.log</file>
         <immediateFlush>false</immediateFlush>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/${HOSTNAME}.%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${log.home}/${appName}/${HOSTNAME}.%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
             <maxHistory>2</maxHistory>
             <maxFileSize>500MB</maxFileSize>
             <totalSizeCap>2GB</totalSizeCap>
