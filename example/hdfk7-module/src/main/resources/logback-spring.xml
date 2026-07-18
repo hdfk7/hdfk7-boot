@@ -16,11 +16,11 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.home}/${appName}/${HOSTNAME}.log</file>
+        <file>${log.home}/${HOSTNAME}.log</file>
         <immediateFlush>false</immediateFlush>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${log.home}/${appName}/${HOSTNAME}.%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>${log.home}/${HOSTNAME}.%d{yyyyMMdd}.%i.log.gz</fileNamePattern>
             <maxHistory>2</maxHistory>
             <maxFileSize>500MB</maxFileSize>
             <totalSizeCap>2GB</totalSizeCap>
