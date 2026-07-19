@@ -1,0 +1,6 @@
+DEST_DIR=/opt/agent
+JAR_NAME=aliyun-java-agent.jar
+DEFAULT_AGENT_DIR=/app/agent
+AGENT_DOWNLOAD_URL=
+
+LOG_HOME=/app/logs
