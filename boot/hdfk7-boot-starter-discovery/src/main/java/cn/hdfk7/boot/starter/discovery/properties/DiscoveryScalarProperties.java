@@ -56,7 +56,7 @@ public class DiscoveryScalarProperties extends SpringBootScalarProperties {
     public String getUrl() {
         List<ScalarSource> sources = this.getSources();
         if (!sources.isEmpty()) {
-            return sources.getFirst().getUrl();
+            return sources.getLast().getUrl();
         }
         return super.getUrl();
     }

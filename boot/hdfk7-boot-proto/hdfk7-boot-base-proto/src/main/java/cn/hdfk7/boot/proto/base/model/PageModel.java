@@ -16,14 +16,14 @@ public abstract class PageModel extends BaseModel {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Min(1)
-    @Max(999)
-    @NotNull
+    @Min(value = 1, message = "页大小不能小于1")
+    @Max(value = 999, message = "页大小不能大于999")
+    @NotNull(message = "页大小不能为空")
     @Schema(description = "页大小")
     private Long size;
 
-    @Min(1)
-    @NotNull
+    @Min(value = 1, message = "当前页不能小于1")
+    @NotNull(message = "当前页不能为空")
     @Schema(description = "当前页")
     private Long current;
 

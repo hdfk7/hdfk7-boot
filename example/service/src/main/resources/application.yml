@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: service
+  cloud:
+    nacos:
+      discovery:
+        username: username
+        password: password
+        server-addr: ip:8848
+      config:
+        username: username
+        password: password
+        server-addr: ip:8848
+        file-extension: yaml
+  config:
+    import:
+      - nacos:${spring.application.name}?refreshEnabled=true

@@ -21,7 +21,7 @@ public class Page<T> extends BaseModel {
     private Long size;
 
     @Schema(description = "当前页")
-    private Long curren;
+    private Long current;
 
     @Schema(description = "总条数")
     private Long total;

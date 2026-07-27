@@ -4,15 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.hdfk7</groupId>
+    <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-proto</artifactId>
-    <version>${revision}</version>
+    <version>${revision}${changelist}</version>
     <packaging>pom</packaging>
     <name>hdfk7-boot-proto</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
-    <description>微服务架构下的公共数据模型与注解定义</description>
+    <description>公共协议聚合模块</description>
 
     <properties>
+        <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 

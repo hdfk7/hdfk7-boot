@@ -3,10 +3,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
-        <groupId>cn.hdfk7</groupId>
+        <groupId>cn.hdfk7.boot</groupId>
         <artifactId>hdfk7-boot-parent</artifactId>
-        <version>${revision}</version>
+        <version>${revision}${changelist}</version>
         <relativePath>../hdfk7-boot-parent/pom.xml</relativePath>
     </parent>
 
@@ -14,7 +15,8 @@
     <packaging>jar</packaging>
     <name>hdfk7-boot-starter-shardingsphere</name>
     <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
-    <description>ShardingSphere JDBC 运行时依赖聚合与 DataSource 自动配置。</description>
+    <description>ShardingSphere JDBC 自动配置</description>
+
     <developers>
         <developer>
             <name>qiang.liang</name>
@@ -35,6 +37,12 @@
     </scm>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
@@ -83,6 +91,23 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>

@@ -6,16 +6,18 @@
 
     <groupId>cn.hdfk7.app</groupId>
     <artifactId>example</artifactId>
-    <version>${revision}</version>
+    <version>${revision}${changelist}</version>
     <packaging>pom</packaging>
     <name>example</name>
+    <description>HDFK7 Boot 示例聚合工程</description>
 
     <properties>
+        <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <modules>
-        <module>hdfk7-module</module>
-        <module>hdfk7-gateway</module>
+        <module>service</module>
+        <module>gateway</module>
     </modules>
 </project>

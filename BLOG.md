@@ -41,29 +41,30 @@
 
 项目的模块划分比较清晰：
 
-| 模块 | 作用 |
-| --- | --- |
-| `hdfk7-boot-parent` | 父 POM，统一依赖版本、插件版本和构建配置 |
-| `hdfk7-boot-proto` | 公共协议与模型聚合模块 |
-| `hdfk7-boot-base-proto` | 公共模型、注解、异常、统一返回结果 |
-| `hdfk7-boot-starter-common` | 通用自动配置和公共组件 |
-| `hdfk7-boot-starter-discovery` | 注册中心、配置中心、OpenFeign、网关、OpenAPI 聚合配置 |
-| `hdfk7-boot-starter-code-generator` | MyBatis-Plus Generator 代码生成依赖聚合 |
+| 模块 | 作用                                                     |
+| --- |----------------------------------------------------------|
+| `hdfk7-boot-dependencies` | BOM，统一管理框架和第三方依赖版本                        |
+| `hdfk7-boot-parent` | 父 POM，继承 dependencies 并统一 Java 和构建插件配置     |
+| `hdfk7-boot-proto` | 公共协议与模型                                           |
+| `hdfk7-boot-base-proto` | 公共模型、注解、异常、统一返回结果                       |
+| `hdfk7-boot-starter-common` | 通用自动配置和公共组件                                   |
+| `hdfk7-boot-starter-discovery` | 注册中心、配置中心、OpenFeign、网关、OpenAPI 聚合配置    |
+| `hdfk7-boot-starter-code-generator` | MyBatis-Plus Generator 代码生成依赖聚合                  |
 | `hdfk7-boot-starter-shardingsphere` | ShardingSphere JDBC 运行时依赖聚合与 DataSource 自动配置 |
-| `hdfk7-gateway` | 网关示例工程 |
-| `hdfk7-module` | 普通 Web 服务示例工程 |
+| `gateway` | 网关示例工程                                             |
+| `service` | 普通 Web 服务示例工程                                    |
 
 这种结构的好处是：基础能力和业务示例解耦，真正业务项目可以只继承 parent，再按需引入 starter。
 
-## 四、父 POM 统一版本管理
+## 四、BOM 与父 POM 统一版本管理
 
-`hdfk7-boot-parent` 是整个框架的基础。它统一管理 Spring Boot、Spring Cloud、Spring Cloud Alibaba、MyBatis-Plus、Redisson、Hutool、MapStruct、Springdoc 等依赖版本。
+`hdfk7-boot-dependencies` 统一管理 Spring Boot、Spring Cloud、Spring Cloud Alibaba、MyBatis-Plus、Redisson、Hutool、MapStruct、Springdoc 等依赖版本；`hdfk7-boot-parent` 通过父子继承关系获得这些版本，并负责构建约定。
 
 业务工程只需要继承父 POM：
 
 ```xml
 <parent>
-    <groupId>cn.hdfk7</groupId>
+    <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-parent</artifactId>
     <version>4.0.0-SNAPSHOT</version>
 </parent>
@@ -71,7 +72,7 @@
 
 这样可以避免每个业务模块重复声明版本，也降低了依赖冲突风险。
 
-父 POM 还统一配置了 Maven 编译插件、资源插件、测试插件、Spring Boot 打包插件和 flatten 插件，对多模块发布和版本管理比较友好。
+已有其他父 POM 的工程也可以通过 `dependencyManagement` 单独导入 `cn.hdfk7.boot:hdfk7-boot-dependencies`。父 POM 还统一配置了 Maven 编译插件、资源插件、测试插件、Spring Boot 打包插件和 flatten 插件，对多模块发布和版本管理比较友好。
 
 ## 五、统一返回和异常模型
 
@@ -177,19 +178,19 @@ scalar:
 普通 Web 服务示例位于：
 
 ```text
-example/hdfk7-module
+example/service
 ```
 
 它引入了：
 
 ```xml
 <dependency>
-    <groupId>cn.hdfk7</groupId>
+    <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-starter-common</artifactId>
 </dependency>
 
 <dependency>
-    <groupId>cn.hdfk7</groupId>
+    <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-starter-discovery</artifactId>
 </dependency>
 ```
@@ -197,10 +198,10 @@ example/hdfk7-module
 启动类中启用了 MyBatis Mapper 扫描和 Feign：
 
 ```java
-@MapperScan("cn.hdfk7.app.module.infrastructure.mapper")
+@MapperScan("cn.hdfk7.app.service.infrastructure.mapper")
 @EnableFeignClients
 @SpringBootApplication
-public class ModuleApplication {
+public class ServiceApplication {
 }
 ```
 
@@ -209,7 +210,7 @@ public class ModuleApplication {
 ```yaml
 spring:
   application:
-    name: module
+    name: service
   cloud:
     nacos:
       discovery:
@@ -229,7 +230,7 @@ spring:
 网关示例位于：
 
 ```text
-example/hdfk7-gateway
+example/gateway
 ```
 
 它引入了 Gateway、Sentinel Gateway、Actuator、OpenTelemetry、Scalar WebFlux 等依赖。
@@ -273,7 +274,7 @@ scalar:
 
 ```xml
 <dependency>
-    <groupId>cn.hdfk7</groupId>
+    <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-starter-code-generator</artifactId>
     <scope>test</scope>
 </dependency>
@@ -282,7 +283,7 @@ scalar:
 示例入口在：
 
 ```text
-example/hdfk7-module/src/test/java/cn/hdfk7/app/module/CodeGenerator.java
+example/service/src/test/java/cn/hdfk7/app/service/CodeGenerator.java
 ```
 
 这种设计比较合理，因为代码生成器通常只在开发期使用，不应该污染线上运行时依赖。
@@ -302,7 +303,7 @@ example/hdfk7-module/src/test/java/cn/hdfk7/app/module/CodeGenerator.java
 
 ```xml
 <dependency>
-    <groupId>cn.hdfk7</groupId>
+    <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-starter-shardingsphere</artifactId>
 </dependency>
 ```

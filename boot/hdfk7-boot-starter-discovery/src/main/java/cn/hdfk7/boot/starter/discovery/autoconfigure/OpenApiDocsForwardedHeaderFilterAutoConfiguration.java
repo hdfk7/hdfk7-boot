@@ -2,6 +2,7 @@ package cn.hdfk7.boot.starter.discovery.autoconfigure;
 
 import cn.hdfk7.boot.starter.discovery.filter.OpenApiDocsForwardedHeaderFilter;
 import cn.hdfk7.boot.starter.discovery.service.NacosServiceLookup;
+import com.scalar.maven.core.ScalarProperties;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
-@ConditionalOnClass(value = {HttpHeadersFilter.class, RouteLocator.class})
+@ConditionalOnClass(value = {ScalarProperties.class, HttpHeadersFilter.class, RouteLocator.class})
 @ConditionalOnProperty(prefix = "springdoc.api-docs", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnProperty(prefix = "scalar.discovery", name = "enabled", havingValue = "true")
 public class OpenApiDocsForwardedHeaderFilterAutoConfiguration {
