@@ -1,3 +1,3 @@
 . "$PSScriptRoot\release-functions.ps1"
 
-Invoke-ProjectRelease @("hdfk7-boot-starter-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery")
+Invoke-ProjectRelease @("hdfk7-boot-starter-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery", "hdfk7-boot-starter-shardingsphere")

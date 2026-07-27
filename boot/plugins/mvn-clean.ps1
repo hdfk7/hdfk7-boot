@@ -1,5 +1,5 @@
 $InitialLocation = Get-Location
-$Projects = @("hdfk7-boot-parent", "hdfk7-boot-proto\hdfk7-boot-base-proto", "hdfk7-boot-starter-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery")
+$Projects = @("hdfk7-boot-parent", "hdfk7-boot-proto\hdfk7-boot-base-proto", "hdfk7-boot-starter-code-generator", "hdfk7-boot-starter-common", "hdfk7-boot-starter-discovery", "hdfk7-boot-starter-shardingsphere")
 
 foreach ($Project in $Projects)
 {
