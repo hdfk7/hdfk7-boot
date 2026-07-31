@@ -1,1 +1,11 @@
-cn.hdfk7.boot.starter.common.BootStarterCommonAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.BootStarterCommonAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.MybatisPlusAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.SnowflakeIdGeneratorAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.IdGeneratorAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.ClientIpResolverAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.KafkaMessageSenderAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.RabbitMessageSenderAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.ValidatorAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.XxlJobAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.SentinelGatewayBlockRequestHandlerAutoConfiguration
+cn.hdfk7.boot.starter.common.autoconfigure.SentinelMvcBlockExceptionHandlerAutoConfiguration

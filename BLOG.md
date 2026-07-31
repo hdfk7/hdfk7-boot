@@ -1,120 +1,84 @@
-# 基于 Spring Boot 3 和 Spring Cloud 2023 的微服务基础框架 hdfk7-boot
+# 基于 Spring Boot 4.1.0 和 Spring Cloud 2025.1.2 的微服务基础框架 hdfk7-boot
 
-## 前言
+在微服务项目落地时，最耗时间的往往不是业务代码，而是基础能力的重复整合：父 POM 版本管理、注册中心、配置中心、网关、OpenFeign、统一返回、异常处理、日志切面、限流降级、分布式 ID、MyBatis-Plus、接口文档等。
 
-在搭建微服务项目时，很多时间并不是花在业务代码上，而是花在基础设施整合上。比如父 POM 版本管理、Nacos 注册中心和配置中心、OpenFeign、Gateway、MyBatis-Plus、Redis、Redisson、Kafka、统一返回结果、统一异常处理、日志链路追踪、接口文档等。
+`hdfk7-boot` 的目标就是把这些通用能力沉淀成一套可复用的 Spring Boot 微服务基础框架，让新项目可以更快启动，业务模块只关注自己的领域逻辑。
 
-这些能力每个项目都会用到，但如果每次都重新整合，不仅效率低，也容易出现版本不兼容、配置不统一、基础能力重复造轮子的问题。
+## 一、项目定位
 
-`hdfk7-boot` 就是为了解决这类问题而整理的一套微服务基础框架。当前 `master` 分支对应的是 Spring Boot 3 和 Spring Cloud 2023 版本线，核心版本为 `3.0.3`，适合作为 Spring Boot 3 微服务项目的基础模板。
+`hdfk7-boot` 是一套基于 `Spring Boot 4.1.0`、`Spring Cloud 2025.1.2`、`Spring Cloud Alibaba 2025.1.0.0` 和 `Java 21` 构建的微服务项目脚手架与 starter 集合。
 
-## 项目定位
+它不是单一业务系统，而是一个基础框架工程，主要解决三类问题：
 
-`hdfk7-boot` 是一套基于 `Spring Boot 3.3.13`、`Spring Cloud 2023.0.6`、`Spring Cloud Alibaba 2023.0.3.4` 和 `Java 21` 构建的微服务项目基础框架。
+1. 统一项目依赖版本和构建规范；
+2. 封装微服务常用基础能力；
+3. 提供普通 Web 服务和 Gateway 网关示例。
 
-它不是一个具体业务系统，而是一套面向微服务项目的基础工程。
+项目整体采用 Maven 多模块结构，核心模块放在 `boot` 目录下，示例工程放在 `example` 目录下。
 
-它主要提供：
+## 二、技术栈
 
-1. 统一的父 POM 和依赖版本管理；
-2. 项目间共享的基础协议、模型、异常和注解；
-3. 通用 starter，封装基础组件和自动配置；
-4. Nacos、OpenFeign、LoadBalancer、Gateway 等服务治理能力；
-5. MyBatis-Plus 代码生成器依赖封装；
-6. Gateway 和普通 Web 服务两个空白示例工程。
+项目主要技术栈如下：
 
-对于新项目来说，可以直接基于这套结构改造出自己的业务工程，减少前期技术整合成本。
-
-## 技术栈与版本
-
-当前 `master` 分支主要版本如下：
-
-| 组件 | 版本 |
+| 类型 | 技术 |
 | --- | --- |
-| Spring Boot | `3.3.13` |
-| Spring Cloud | `2023.0.6` |
-| Spring Cloud Alibaba | `2023.0.3.4` |
-| Java | `21` |
-| hdfk7 parent | `3.0.3` |
-| hdfk7 common | `3.0.3` |
-| hdfk7 discovery | `3.0.3` |
-| hdfk7 common-sdk | `3.0.3` |
-| hdfk7 generator | `3.0.3` |
+| 基础框架 | Spring Boot 4.1.0 |
+| 微服务体系 | Spring Cloud 2025.1.2 |
+| 服务注册与配置 | Nacos |
+| 网关 | Spring Cloud Gateway WebFlux |
+| 服务调用 | OpenFeign、LoadBalancer |
+| 限流降级 | Sentinel |
+| 数据访问 | MyBatis-Plus、ShardingSphere JDBC |
+| 缓存与分布式能力 | Redis、Redisson |
+| 消息队列 | Kafka、RabbitMQ |
+| 接口文档 | Springdoc OpenAPI、Scalar |
+| 对象转换 | MapStruct |
+| 工具库 | Hutool |
+| 构建工具 | Maven |
+| JDK | Java 21 |
 
-项目还集成了 MyBatis-Plus、Redisson、Hutool、MapStruct、Knife4j、SkyWalking、Kafka、RabbitMQ、XXL-JOB、EasyExcel 等常用依赖。
+## 三、模块设计
 
-需要注意的是，README 中特别提到：该版本是在 SkyWalking 9.5 上适配的，Gateway 需要手动配置 `spring-cloud-starter-gateway` 版本为 `4.1.1` 及以下，否则 SkyWalking 可能不生效。
+项目的模块划分比较清晰：
 
-## 模块结构
+| 模块 | 作用                                                     |
+| --- |----------------------------------------------------------|
+| `hdfk7-boot-dependencies` | BOM，统一管理框架和第三方依赖版本                        |
+| `hdfk7-boot-parent` | 父 POM，继承 dependencies 并统一 Java 和构建插件配置     |
+| `hdfk7-boot-proto` | 公共协议与模型                                           |
+| `hdfk7-boot-base-proto` | 公共模型、注解、异常、统一返回结果                       |
+| `hdfk7-boot-starter-common` | 通用自动配置和公共组件                                   |
+| `hdfk7-boot-starter-discovery` | 注册中心、配置中心、OpenFeign、网关、OpenAPI 聚合配置    |
+| `hdfk7-boot-starter-code-generator` | MyBatis-Plus Generator 代码生成依赖聚合                  |
+| `hdfk7-boot-starter-shardingsphere` | ShardingSphere JDBC 运行时依赖聚合与 DataSource 自动配置 |
+| `gateway` | 网关示例工程                                             |
+| `service` | 普通 Web 服务示例工程                                    |
 
-项目主要模块如下：
+这种结构的好处是：基础能力和业务示例解耦，真正业务项目可以只继承 parent，再按需引入 starter。
 
-| 模块 | 说明 |
-| --- | --- |
-| `hdfk7-boot-starter-parent` | 项目父包，统一管理依赖和插件 |
-| `hdfk7-common-sdk` | 项目间共享 SDK 聚合模块 |
-| `hdfk7-base-proto` | 基础模型、分页模型、统一返回、异常、注解 |
-| `hdfk7-common-proto` | 公共协议扩展模块 |
-| `hdfk7-boot-starter-common` | 通用组件 starter |
-| `hdfk7-boot-starter-discovery` | 服务发现、配置中心、负载均衡、OpenFeign 等配置 |
-| `hdfk7-code-generator` | 基于 MyBatis-Plus Generator 的代码生成器依赖封装 |
-| `hdfk7-gateway` | Gateway 网关示例 |
-| `hdfk7-module` | 普通 Web 服务示例 |
+## 四、BOM 与父 POM 统一版本管理
 
-整体结构可以分成三层：
+`hdfk7-boot-dependencies` 统一管理 Spring Boot、Spring Cloud、Spring Cloud Alibaba、MyBatis-Plus、Redisson、Hutool、MapStruct、Springdoc 等依赖版本；`hdfk7-boot-parent` 通过父子继承关系获得这些版本，并负责构建约定。
 
-1. 基础层：`parent`、`common-sdk`、`base-proto`；
-2. 能力层：`starter-common`、`starter-discovery`、`code-generator`；
-3. 示例层：`gateway`、`module`。
-
-这样的分层比较适合企业内部沉淀基础框架：公共协议归公共协议，自动配置归 starter，业务项目只按需引入。
-
-## 父 POM：统一依赖版本
-
-`hdfk7-boot-starter-parent` 继承自 Spring Boot 官方 parent：
-
-```xml
-<parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.13</version>
-    <relativePath/>
-</parent>
-```
-
-同时它统一管理了 Spring Cloud、Spring Cloud Alibaba、Redisson、MapStruct、Knife4j、MyBatis-Plus、Hutool、SkyWalking、XXL-JOB、EasyExcel 等依赖版本。
-
-业务工程继承该 parent 后，就可以避免在每个模块里重复维护版本号：
+业务工程只需要继承父 POM：
 
 ```xml
 <parent>
     <groupId>cn.hdfk7.boot</groupId>
-    <artifactId>hdfk7-boot-starter-parent</artifactId>
-    <version>3.0.3</version>
+    <artifactId>hdfk7-boot-parent</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
 </parent>
 ```
 
-这对多模块项目尤其重要，因为微服务系统中模块越多，依赖版本漂移的风险越高。
+这样可以避免每个业务模块重复声明版本，也降低了依赖冲突风险。
 
-## common-sdk：公共协议与基础模型
+已有其他父 POM 的工程也可以通过 `dependencyManagement` 单独导入 `cn.hdfk7.boot:hdfk7-boot-dependencies`。父 POM 还统一配置了 Maven 编译插件、资源插件、测试插件、Spring Boot 打包插件和 flatten 插件，对多模块发布和版本管理比较友好。
 
-`hdfk7-common-sdk` 是公共 SDK 聚合模块，下面包含：
+## 五、统一返回和异常模型
 
-- `hdfk7-base-proto`
-- `hdfk7-common-proto`
+`hdfk7-boot-base-proto` 提供了统一返回对象 `Result<T>` 和结果码 `ResultCode`。
 
-其中 `hdfk7-base-proto` 提供了比较核心的基础能力：
-
-- `BaseModel`
-- `Page`
-- `PageModel`
-- `Result<T>`
-- `ResultCode`
-- `BaseException`
-- `ResubmitCheck`
-- `BaseMapstruct`
-
-统一返回结果由 `Result<T>` 和 `ResultCode` 共同承担，业务接口可以保持一致的响应结构：
+统一返回结果的价值在于让所有接口保持一致的响应结构，例如：
 
 ```json
 {
@@ -124,97 +88,120 @@
 }
 ```
 
-异常体系中包含：
+同时，项目中定义了基础异常体系，比如：
 
 - `BaseException`
 - `UnauthorizedException`
 - `TokenInvalidException`
-- `RemoteCallException`
 - `ResubmitException`
+- `RemoteCallException`
 - `ServiceDowngradeException`
 
-这些异常可以配合全局异常处理器使用，让业务代码只需要抛出明确的业务异常，最终响应格式由框架统一处理。
+业务代码可以通过抛出标准异常，让全局异常处理器统一转换为接口响应，避免每个 Controller 手写 try-catch。
 
-## starter-common：通用基础能力
+普通 Web 服务中可以继承 `AbstractGlobalExceptionHandler`，网关服务中可以继承 `AbstractGatewayExceptionHandler`，分别适配 Spring MVC 和 WebFlux Gateway 场景。
 
-`hdfk7-boot-starter-common` 是通用组件 starter，依赖 `hdfk7-common-proto`，并以 `provided` 方式适配 Redis、Kafka、RabbitMQ、Redisson、Sentinel、WebFlux、XXL-JOB、MyBatis-Plus 等组件。
+## 六、starter-common：通用基础能力封装
 
-该 starter 的自动配置入口是：
+`hdfk7-boot-starter-common` 是项目里最核心的通用 starter，主要提供以下自动配置：
 
 ```text
-cn.hdfk7.boot.starter.common.BootStarterCommonAutoConfiguration
+BootStarterCommonAutoConfiguration
+MybatisPlusAutoConfiguration
+SnowflakeIdGeneratorAutoConfiguration
+IdGeneratorAutoConfiguration
+ClientIpResolverAutoConfiguration
+KafkaMessageSenderAutoConfiguration
+RabbitMessageSenderAutoConfiguration
+ValidatorAutoConfiguration
+XxlJobAutoConfiguration
+SentinelGatewayBlockRequestHandlerAutoConfiguration
+SentinelMvcBlockExceptionHandlerAutoConfiguration
 ```
 
-它包含的典型能力有：
+它封装的能力包括：
 
-1. MyBatis-Plus 分页组件；
-2. 雪花算法 ID 生成组件；
-3. `IdUtil` ID 工具；
+1. MyBatis-Plus 分页插件配置；
+2. Redis 辅助的雪花算法 ID 生成器；
+3. 客户端 IP 解析；
 4. Kafka 消息发送工具；
 5. RabbitMQ 消息发送工具；
-6. IP 获取工具；
-7. 参数校验组件；
-8. XXL-JOB 执行器配置；
-9. Sentinel MVC 限流返回处理；
-10. Sentinel Gateway 限流返回处理；
-11. 日志切面基类；
-12. 防重复提交切面基类。
+6. 参数校验配置；
+7. XXL-JOB 配置；
+8. Sentinel MVC 限流异常处理；
+9. Sentinel Gateway 限流异常处理；
+10. 日志切面和防重复提交切面抽象类。
 
-其中防重复提交能力通过 `@ResubmitCheck` 注解和 `ResubmitCheckAspect` 配合实现，底层使用 Redisson 分布式锁控制重复请求。
+其中防重复提交能力基于 Redisson 分布式锁实现，业务模块只需要继承抽象切面并声明切点，就可以复用底层锁逻辑。
 
-业务模块可以像示例工程一样继承框架切面：
+## 七、starter-discovery：微服务发现与网关增强
 
-```java
-@Aspect
-@Component
-public class ResubmitCheckAspect extends cn.hdfk7.boot.starter.common.aspect.ResubmitCheckAspect {
-    @Around("@annotation(resubmitCheck)")
-    public Object doAround(ProceedingJoinPoint joinPoint, ResubmitCheck resubmitCheck) throws Throwable {
-        return doTask(joinPoint, resubmitCheck);
-    }
-}
-```
-
-这样可以把通用防重逻辑放在 starter 中，业务工程只负责定义切点。
-
-## starter-discovery：服务发现与网关联动
-
-`hdfk7-boot-starter-discovery` 主要封装微服务发现相关能力，自动配置入口是：
-
-```text
-cn.hdfk7.boot.starter.discovery.BootStarterDiscoveryAutoConfiguration
-```
-
-该模块集成了：
+`hdfk7-boot-starter-discovery` 主要面向微服务治理场景，集成了：
 
 - Nacos Config
 - Nacos Discovery
 - OpenFeign
 - LoadBalancer
-- Caffeine
-- Spring Cloud Gateway Server
+- Gateway
+- Scalar / OpenAPI 文档聚合
+- Nacos 服务监听
+- 网关路由刷新
 
-其中比较关键的是 `AbstractLoadbalancerEventListener` 和 `GatewayLoadbalancerEventListener`。
+它的自动配置包括：
 
-项目通过监听 Nacos 服务变化事件，在服务上线、下线或实例变更时发布刷新事件，让网关和负载均衡缓存能更及时地感知服务变化。
+```text
+BootStarterDiscoveryAutoConfiguration
+NacosServiceLookupAutoConfiguration
+RestTemplateAutoConfiguration
+ScalarAutoConfiguration
+OpenApiDocsForwardedHeaderFilterAutoConfiguration
+GatewayLoadBalancerEventListenerAutoConfiguration
+LoadBalancerEventListenerAutoConfiguration
+```
 
-这类能力在微服务项目中很实用。否则服务实例已经变化，但网关或客户端缓存还没有及时刷新，就可能出现短时间路由不准确或请求失败的问题。
+比较有价值的一点是：框架通过监听 Nacos 服务变化事件，在服务上下线时刷新网关路由缓存，使 Gateway 能更及时地感知后端服务变化。
 
-## 示例工程：普通 Web 服务
+同时，`ScalarAutoConfiguration` 支持从服务发现中聚合接口文档，让网关可以作为统一 API 文档入口。
+
+网关示例中只需要开启配置：
+
+```yaml
+scalar:
+  discovery:
+    enabled: true
+```
+
+即可启用服务发现模式下的文档聚合能力。
+
+## 八、普通服务示例
 
 普通 Web 服务示例位于：
 
 ```text
-example/hdfk7-module
+example/service
 ```
 
-启动类启用了 Mapper 扫描和 OpenFeign：
+它引入了：
+
+```xml
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-common</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-discovery</artifactId>
+</dependency>
+```
+
+启动类中启用了 MyBatis Mapper 扫描和 Feign：
 
 ```java
-@MapperScan("cn.hdfk7.app.module.infrastructure.mapper")
+@MapperScan("cn.hdfk7.app.service.infrastructure.mapper")
 @EnableFeignClients
 @SpringBootApplication
-public class ModuleApplication {
+public class ServiceApplication {
 }
 ```
 
@@ -223,16 +210,12 @@ public class ModuleApplication {
 ```yaml
 spring:
   application:
-    name: module
+    name: service
   cloud:
     nacos:
       discovery:
-        username: username
-        password: password
         server-addr: ip:8848
       config:
-        username: username
-        password: password
         server-addr: ip:8848
         file-extension: yaml
   config:
@@ -240,87 +223,136 @@ spring:
       - nacos:${spring.application.name}?refreshEnabled=true
 ```
 
-示例工程还包含全局异常处理器、日志切面、防重复提交切面等内容，可以作为普通业务服务的初始模板。
+这说明业务服务可以同时获得配置中心、注册中心、OpenFeign、统一异常、MyBatis-Plus、接口文档等基础能力。
 
-## 示例工程：Gateway 网关
+## 九、网关示例
 
 网关示例位于：
 
 ```text
-example/hdfk7-gateway
+example/gateway
 ```
 
-启动类同样启用了 Feign：
+它引入了 Gateway、Sentinel Gateway、Actuator、OpenTelemetry、Scalar WebFlux 等依赖。
 
-```java
-@EnableFeignClients
-@SpringBootApplication
-public class GatewayApplication {
-}
+核心配置同样接入 Nacos：
+
+```yaml
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ip:8848
+      config:
+        server-addr: ip:8848
+        file-extension: yaml
+  config:
+    import:
+      - nacos:${spring.application.name}?refreshEnabled=true
+springdoc:
+  api-docs:
+    enabled: true
+scalar:
+  discovery:
+    enabled: true
 ```
 
-网关侧包含：
+网关侧可以通过继承 `AbstractGatewayFilter` 实现统一过滤逻辑，也可以通过继承 `AbstractGatewayExceptionHandler` 实现 WebFlux 网关异常统一输出。
 
-- `GatewayFilter`
-- `GlobalExceptionHandler`
-- `GatewayController`
-- `ApplicationProperties`
+## 十、代码生成器
 
-其中 `GlobalExceptionHandler` 实现了 `ErrorWebExceptionHandler`，用于处理 WebFlux 网关场景下的异常响应。它会把 `BaseException` 等异常转换为统一的 `Result` 结构。
+`hdfk7-boot-starter-code-generator` 是一个轻量级代码生成依赖聚合模块，主要聚合：
 
-`GatewayFilter` 则可以用于处理网关层的统一过滤逻辑，比如请求头、traceId、认证信息传递等。
-
-## 代码生成器
-
-`hdfk7-code-generator` 是基于 MyBatis-Plus Generator 整合的代码生成器依赖模块，包含：
-
-- MySQL Driver
 - MyBatis-Plus Generator
 - MyBatis-Plus Extension
 - Freemarker
+- MySQL Driver
 
-它的定位不是运行时 starter，而是开发阶段辅助工具。
+它不提供自动配置，更适合在开发或测试阶段使用：
 
-业务项目可以在需要生成实体、Mapper、Service、Controller 等模板代码时引入该模块，减少重复编写 CRUD 基础代码的成本。
+```xml
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-code-generator</artifactId>
+    <scope>test</scope>
+</dependency>
+```
 
-## 项目亮点
+示例入口在：
 
-第一，版本统一。
+```text
+example/service/src/test/java/cn/hdfk7/app/service/CodeGenerator.java
+```
 
-通过 `hdfk7-boot-starter-parent` 统一维护 Spring Boot、Spring Cloud 和周边组件版本，降低多模块项目的依赖冲突概率。
+这种设计比较合理，因为代码生成器通常只在开发期使用，不应该污染线上运行时依赖。
 
-第二，公共协议独立。
+## 十一、ShardingSphere 依赖聚合
 
-统一返回、分页、异常、注解、MapStruct 基类等都放在公共 SDK 中，方便多个服务共享。
+`hdfk7-boot-starter-shardingsphere` 是一个运行时依赖聚合与自动配置模块，主要聚合：
 
-第三，starter 化封装。
+- ShardingSphere JDBC
+- ShardingSphere Sharding Core
+- MySQL SQL Parser Engine
+- Hikari 数据源池适配
+- Standalone Memory Repository
+- Simple Authority
 
-Redis、Redisson、Kafka、RabbitMQ、Sentinel、XXL-JOB、MyBatis-Plus 等通用能力被封装在 starter 中，业务服务按需引入即可。
+它在存在 `spring.shardingsphere.raw` 配置时自动创建 `DataSource`，业务工程只需要保留 YAML 配置，并把分散的 ShardingSphere 依赖替换成一个 starter：
 
-第四，兼顾普通服务和网关服务。
+```xml
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-shardingsphere</artifactId>
+</dependency>
+```
 
-项目同时提供 `hdfk7-module` 和 `hdfk7-gateway` 示例，覆盖大多数微服务项目的基本形态。
+starter 内置半年分表算法，业务配置中的 `algorithmClassName` 可以改为：
 
-第五，考虑链路追踪场景。
+```yaml
+algorithmClassName: cn.hdfk7.boot.starter.shardingsphere.algorithm.HalfYearRangeShardingAlgorithm
+```
 
-该版本适配 SkyWalking 9.5，并对 Gateway 版本兼容性做了说明，说明项目不是只做依赖堆叠，也关注实际运行时的可观测性问题。
+## 十二、项目亮点
 
-## 适用场景
+我认为这个项目有几个值得借鉴的设计点。
 
-`hdfk7-boot` 适合以下场景：
+第一，基础能力 starter 化。
 
-1. 基于 Spring Boot 3 搭建微服务项目；
-2. 需要统一多个服务的依赖版本；
-3. 项目使用 Nacos 做注册中心和配置中心；
-4. 项目需要 Gateway、OpenFeign、LoadBalancer；
-5. 希望统一接口返回和异常处理；
-6. 希望内置日志切面、防重复提交、分布式 ID 等基础能力；
-7. 团队准备沉淀自己的 Java 微服务基础框架。
+通用能力放进 starter，业务服务按需引入，避免复制粘贴配置和工具类。
 
-## 总结
+第二，协议模型独立。
 
-`hdfk7-boot` 是一套基于 Spring Boot 3 的微服务基础脚手架。它把微服务项目中常见的基础能力进行了模块化整理，包括父 POM、公共 SDK、通用 starter、服务发现 starter、代码生成器，以及 Gateway 和普通 Web 服务示例。
+统一返回、分页模型、基础异常、注解等放在 `base-proto` 中，便于多个服务共享。
 
-它最大的价值在于减少新项目启动阶段的重复整合工作，让团队可以把更多精力放在业务建模和业务实现上。
+第三，普通服务和网关分别适配。
 
-如果你正在搭建 Spring Boot 3 + Spring Cloud + Nacos 的微服务项目，这个项目可以作为一个不错的基础模板参考。
+Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供了 `AbstractGlobalExceptionHandler` 和 `AbstractGatewayExceptionHandler`，没有强行用一套逻辑覆盖所有场景。
+
+第四，服务发现和文档聚合结合。
+
+通过 Nacos 发现服务，再配合 Scalar/OpenAPI 聚合文档，网关不仅承担流量入口，也可以作为接口文档入口。
+
+第五，兼容较新的技术版本。
+
+项目基于 Spring Boot 4.1.0、Spring Cloud 2025.1.2 和 Java 21，适合用来探索新版本微服务项目的基础搭建方式。
+
+## 十三、适用场景
+
+`hdfk7-boot` 比较适合以下场景：
+
+1. 新建 Spring Boot 微服务项目；
+2. 多个业务服务需要统一依赖版本；
+3. 项目需要 Nacos、Gateway、OpenFeign、Sentinel 等微服务组件；
+4. 团队希望沉淀自己的基础 starter；
+5. 希望普通服务和网关服务有统一的异常、日志、限流返回格式；
+6. 需要一个可参考的 Spring Boot 4.1.0 微服务工程模板。
+
+## 十四、总结
+
+`hdfk7-boot` 本质上是一套面向微服务项目的基础框架，它把项目初始化阶段最常见、最重复的基础能力进行了封装，包括父 POM 版本管理、公共模型、统一异常、分布式 ID、MyBatis-Plus、Nacos、OpenFeign、Gateway、Sentinel、接口文档和代码生成器等。
+
+对于业务项目来说，它的价值不是替代业务架构，而是把通用技术底座先搭好，让业务服务可以用更低成本接入微服务体系。
+
+如果你正在搭建基于 Spring Boot 4.1.0 和 Spring Cloud 2025.1.2 的微服务项目，这个项目可以作为一个不错的参考模板。

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-proto</artifactId>
+    <version>${revision}${changelist}</version>
+    <packaging>pom</packaging>
+    <name>hdfk7-boot-proto</name>
+    <url>https://blog.csdn.net/qq_37157160/article/details/104988331</url>
+    <description>公共协议聚合模块</description>
+
+    <properties>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <developers>
+        <developer>
+            <name>qiang.liang</name>
+            <email>lq173228514@gmail.com</email>
+            <url>https://docs.hdfk7.cn</url>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/hdfk7/hdfk7-boot</url>
+    </scm>
+
+    <modules>
+        <module>hdfk7-boot-base-proto</module>
+    </modules>
+</project>

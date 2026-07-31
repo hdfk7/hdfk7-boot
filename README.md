@@ -1,38 +1,127 @@
-**前言**
+# hdfk7-boot
 
-众所周知，在项目搭建初期，会耗费大量时间在整合jar包、配置上面，即便有了springboot，由于各个版本之间的依赖、兼容关系，也是十分的麻烦。
+`hdfk7-boot` 是一套基于 Spring Boot 4.1.0 和 Spring Cloud 2025.1.2 的微服务项目基础框架，封装常用依赖、公共模型、自动配置和示例工程，减少新项目初始化时的重复整合工作。
 
-所以本人在此整合了一份基于springboot 3.3.13搭建的parent项目。
+## 功能
 
-包含了nacos注册/配置中心、mybatisplus、mybatisplus代码生成器、redisson、雪花算法id生成器、日志切面、防重复提交切面、kafka消息工具、jackson工具、Hutool工具、openfeign、knife4j、skywalking、mapstruct、统一返回结果、统一异常处理，另外还有两个空白项目，分别是
-gateway和普通的web项目，主要是方便以后做新项目时可以直接把整个parent换一下名字就能进行开发。
+- Nacos 注册中心、配置中心
+- OpenFeign、LoadBalancer、Gateway 相关配置
+- MyBatis-Plus、MyBatis-Plus Generator
+- ShardingSphere JDBC 运行时依赖聚合
+- Redisson、Redis、Kafka、RabbitMQ
+- Sentinel WebMVC / Gateway 限流处理
+- 统一返回结果、统一异常处理
+- 雪花算法 ID 生成器
+- 日志切面、防重复提交切面
+- Hutool、Jackson、MapStruct、Swagger / OpenAPI
+- Gateway 和普通 Web 服务示例工程
 
-**模块**
+## 模块
 
-* hdfk7-boot-starter-parent 项目父包
-* hdfk7-common-sdk 项目间共享的文件
-* hdfk7-boot-starter-discovery 服务发现配置
-* hdfk7-boot-starter-common 整合2、3和其它一些配置
-* hdfk7-code-generator 代码生成器
-* hdfk7-gateway 空白服务网关
-* hdfk7-module 空白模块
+| 模块 | 说明                                                                      |
+| --- |---------------------------------------------------------------------------|
+| `hdfk7-boot-dependencies` | BOM，统一管理 Spring Boot、Spring Cloud、第三方库和框架模块版本           |
+| `hdfk7-boot-parent` | 父 POM，继承 dependencies 并统一 Java 和构建插件配置                      |
+| `hdfk7-boot-proto` | 公共协议与模型                                                            |
+| `hdfk7-boot-base-proto` | 公共数据模型、注解、异常、统一返回结果                                    |
+| `hdfk7-boot-starter-common` | 通用自动配置与公共组件                                                    |
+| `hdfk7-boot-starter-discovery` | 服务发现、配置中心、OpenFeign、网关和 OpenAPI 聚合配置                    |
+| `hdfk7-boot-starter-code-generator` | 基于 MyBatis-Plus Generator 的代码生成依赖聚合，推荐仅在测试/开发阶段使用 |
+| `hdfk7-boot-starter-shardingsphere` | ShardingSphere JDBC 运行时依赖聚合与 DataSource 自动配置                  |
+| `gateway` | 网关示例工程                                                              |
+| `service` | 普通 Web 服务示例工程                                                     |
 
-以上1、2、3、4、5模块都已经发布在maven中央仓库，可以尽情享受开源的快乐。
+## 版本
 
-**项目地址**
+当前版本：
 
-GitHub - https://github.com/hdfk7/hdfk7-boot
+```text
+4.0.0-SNAPSHOT
+```
 
-**依赖版本**
+适配版本：
 
-* parent=>3.0.3
-* common=>3.0.3
-* discovery=>3.0.3
-* common-sdk=>3.0.3
-* generator=>3.0.3
+| 依赖 | 版本 |
+| --- | --- |
+| Spring Boot | `4.1.0` |
+| Spring Cloud | `2025.1.2` |
+| Spring Cloud Alibaba | `2025.1.0.0` |
+| Java | `21` |
 
-**说明**
+## 使用方式
 
-上述版本都是在skywalking9.5版本上适配的。
+业务工程建议继承 `hdfk7-boot-parent`：
 
-gateway特别配置，需要手动配置spring-cloud-starter-gateway版本为4.1.1及以下，不然skywalking不生效。
+```xml
+<parent>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-parent</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+</parent>
+```
+
+已有父 POM 的工程可以只导入 BOM：
+
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>cn.hdfk7.boot</groupId>
+            <artifactId>hdfk7-boot-dependencies</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+普通 Web 服务可按需引入：
+
+```xml
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-common</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-discovery</artifactId>
+</dependency>
+```
+
+代码生成器 starter 仅聚合 MyBatis-Plus Generator、Freemarker 和数据库驱动等依赖，不提供自动配置。推荐在业务工程中使用 `test` scope 引入，并按项目实际数据库、包名、表名编写生成入口：
+
+```xml
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-code-generator</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+示例入口可参考 `example/service/src/test/java/cn/hdfk7/app/service/CodeGenerator.java`。
+
+ShardingSphere starter 聚合 JDBC、分片、MySQL SQL Parser、Hikari 数据源池、Standalone Memory Repository 和 Simple Authority 等运行时依赖，并在存在 `spring.shardingsphere.raw` 配置时自动创建 `DataSource`。业务工程可以用它替换分散声明的 ShardingSphere 依赖：
+
+```xml
+<dependency>
+    <groupId>cn.hdfk7.boot</groupId>
+    <artifactId>hdfk7-boot-starter-shardingsphere</artifactId>
+</dependency>
+```
+
+内置半年分表算法：
+
+```yaml
+algorithmClassName: cn.hdfk7.boot.starter.shardingsphere.algorithm.HalfYearRangeShardingAlgorithm
+```
+
+## 示例工程
+
+- `example/gateway`：网关服务示例
+- `example/service`：普通 Web 服务示例，包含代码生成器测试入口
+
+## 项目地址
+
+GitHub: https://github.com/hdfk7/hdfk7-boot
