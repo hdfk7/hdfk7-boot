@@ -14,7 +14,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
-import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,11 +42,11 @@ public abstract class AbstractGatewayFilter implements GlobalFilter, Ordered {
     }
 
     protected boolean checkExcludeUri(String uri) {
-        String urlWhitelist = appProperties.getUrlWhitelist();
-        if (!StringUtils.hasText(urlWhitelist)) {
+        List<String> urlWhitelist = appProperties.getUrlWhitelist();
+        if (urlWhitelist == null || urlWhitelist.isEmpty()) {
             return false;
         }
-        return Arrays.stream(urlWhitelist.split(","))
+        return urlWhitelist.stream()
                 .map(String::trim)
                 .filter(StringUtils::hasText)
                 .anyMatch(item -> ANT_PATH_MATCHER.match(item, uri));
