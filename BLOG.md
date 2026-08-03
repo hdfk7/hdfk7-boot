@@ -83,7 +83,7 @@
 ```json
 {
   "code": 0,
-  "msg": "success",
+  "msg": "成功",
   "data": {}
 }
 ```
@@ -233,7 +233,7 @@ spring:
 example/gateway
 ```
 
-它引入了 Gateway、Sentinel Gateway、Actuator、OpenTelemetry、Scalar WebFlux 等依赖。
+它引入了 Gateway、Sentinel Gateway、Actuator、Scalar WebFlux 等依赖。
 
 核心配置同样接入 Nacos：
 
