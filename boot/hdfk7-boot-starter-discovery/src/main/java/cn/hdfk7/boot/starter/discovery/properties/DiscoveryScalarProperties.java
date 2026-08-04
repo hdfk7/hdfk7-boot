@@ -3,15 +3,20 @@ package cn.hdfk7.boot.starter.discovery.properties;
 import cn.hdfk7.boot.starter.discovery.service.NacosServiceLookup;
 import com.scalar.maven.core.config.ScalarSource;
 import com.scalar.maven.webflux.SpringBootScalarProperties;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 public class DiscoveryScalarProperties extends SpringBootScalarProperties {
     protected final DiscoveryClient discoveryClient;
     protected final NacosServiceLookup nacosServiceLookup;
@@ -19,6 +24,7 @@ public class DiscoveryScalarProperties extends SpringBootScalarProperties {
     protected final List<String> excludedServices;
     protected final boolean excludeSelf;
     protected final String apiDocsPath;
+    private Discovery discovery = new Discovery();
 
     public DiscoveryScalarProperties(DiscoveryClient discoveryClient,
                                      NacosServiceLookup nacosServiceLookup,
@@ -36,10 +42,20 @@ public class DiscoveryScalarProperties extends SpringBootScalarProperties {
 
     @Override
     public List<ScalarSource> getSources() {
+        List<ScalarSource> sources = new ArrayList<>();
+        List<ScalarSource> configuredSources = super.getSources();
+        if (configuredSources != null) {
+            sources.addAll(configuredSources);
+        }
+
         List<String> serviceIds = this.serviceIds(excludedServiceIds());
-        return serviceIds.stream()
-                .map(serviceId -> scalarSource(serviceId, serviceIds.indexOf(serviceId) == 0))
-                .toList();
+        for (String serviceId : serviceIds) {
+            sources.add(scalarSource(serviceId, false));
+        }
+        if (!sources.isEmpty() && sources.stream().noneMatch(source -> Boolean.TRUE.equals(source.isDefault()))) {
+            sources.getFirst().setDefault(true);
+        }
+        return List.copyOf(sources);
     }
 
     protected List<String> serviceIds(Set<String> excludedServiceIds) {
@@ -54,11 +70,11 @@ public class DiscoveryScalarProperties extends SpringBootScalarProperties {
 
     @Override
     public String getUrl() {
-        List<ScalarSource> sources = this.getSources();
-        if (!sources.isEmpty()) {
-            return sources.getLast().getUrl();
-        }
-        return super.getUrl();
+        return this.getSources().stream()
+                .filter(source -> Boolean.TRUE.equals(source.isDefault()))
+                .map(ScalarSource::getUrl)
+                .findFirst()
+                .orElseGet(super::getUrl);
     }
 
     protected Set<String> excludedServiceIds() {
@@ -92,5 +108,11 @@ public class DiscoveryScalarProperties extends SpringBootScalarProperties {
         return value.toLowerCase(Locale.ROOT)
                 .replaceAll("[^a-z0-9]+", "-")
                 .replaceAll("(^-|-$)", "");
+    }
+
+    @Getter
+    @Setter
+    public static class Discovery {
+        private boolean enabled = false;
     }
 }
