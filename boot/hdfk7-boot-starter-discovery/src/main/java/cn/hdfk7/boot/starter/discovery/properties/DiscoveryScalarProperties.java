@@ -21,22 +21,15 @@ public class DiscoveryScalarProperties extends SpringBootScalarProperties {
     protected final DiscoveryClient discoveryClient;
     protected final NacosServiceLookup nacosServiceLookup;
     protected final String applicationName;
-    protected final List<String> excludedServices;
-    protected final boolean excludeSelf;
     protected final String apiDocsPath;
-    private Discovery discovery = new Discovery();
+    protected Discovery discovery = new Discovery();
+    protected List<String> excludedServices = List.of();
+    protected boolean excludeSelf = true;
 
-    public DiscoveryScalarProperties(DiscoveryClient discoveryClient,
-                                     NacosServiceLookup nacosServiceLookup,
-                                     String applicationName,
-                                     List<String> excludedServices,
-                                     boolean excludeSelf,
-                                     String apiDocsPath) {
+    public DiscoveryScalarProperties(DiscoveryClient discoveryClient, NacosServiceLookup nacosServiceLookup, String applicationName, String apiDocsPath) {
         this.discoveryClient = discoveryClient;
         this.nacosServiceLookup = nacosServiceLookup;
         this.applicationName = applicationName;
-        this.excludedServices = excludedServices;
-        this.excludeSelf = excludeSelf;
         this.apiDocsPath = apiDocsPath;
     }
 

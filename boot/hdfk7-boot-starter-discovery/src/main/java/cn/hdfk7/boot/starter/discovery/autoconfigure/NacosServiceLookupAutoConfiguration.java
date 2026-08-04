@@ -13,8 +13,7 @@ import org.springframework.context.annotation.Bean;
 public class NacosServiceLookupAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
-    public NacosServiceLookup nacosServiceLookup(NacosServiceManager nacosServiceManager,
-                                                 NacosDiscoveryProperties nacosDiscoveryProperties) {
+    public NacosServiceLookup nacosServiceLookup(NacosServiceManager nacosServiceManager, NacosDiscoveryProperties nacosDiscoveryProperties) {
         return new NacosServiceLookup(nacosServiceManager, nacosDiscoveryProperties);
     }
 }
