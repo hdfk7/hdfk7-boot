@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public enum ResultCode {
+public enum ResultCode implements IResultCode {
     SYS_ERROR(-1, "前方路滑请稍后再试"),
     SUCCESS(0, "成功"),
     RESUBMIT_ERROR(1, "重复请求"),
@@ -16,6 +16,7 @@ public enum ResultCode {
     SERVICE_DOWNGRADE_ERROR(3, "服务降级"),
     TOKEN_INVALID_ERROR(4, "无效令牌"),
     UNAUTHORIZED_ERROR(5, "未授权"),
+    BUSINESS_ERROR(6, "业务异常"),
     ;
 
     private int code;

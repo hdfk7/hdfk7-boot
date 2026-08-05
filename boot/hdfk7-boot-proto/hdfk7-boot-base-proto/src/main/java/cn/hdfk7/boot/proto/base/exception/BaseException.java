@@ -1,5 +1,6 @@
 package cn.hdfk7.boot.proto.base.exception;
 
+import cn.hdfk7.boot.proto.base.result.IResultCode;
 import cn.hdfk7.boot.proto.base.result.ResultCode;
 
 import java.io.Serial;
@@ -8,7 +9,7 @@ public abstract class BaseException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public ResultCode code;
+    public IResultCode code;
     public Object errorData;
 
     public BaseException() {
@@ -19,23 +20,19 @@ public abstract class BaseException extends RuntimeException {
         this(ResultCode.SYS_ERROR, String.join(",", message));
     }
 
-    public BaseException(ResultCode code) {
-        this(code.getMsg());
-        this.code = code;
+    public BaseException(IResultCode code) {
+        this(code, code.getMsg());
     }
 
-    public BaseException(ResultCode code, String message) {
-        super(message);
-        this.code = code;
+    public BaseException(IResultCode code, String message) {
+        this(code, message, null);
     }
 
-    public BaseException(ResultCode code, Object errorData) {
-        super(code.getMsg());
-        this.code = code;
-        this.errorData = errorData;
+    public BaseException(IResultCode code, Object errorData) {
+        this(code, code.getMsg(), errorData);
     }
 
-    public BaseException(ResultCode code, String message, Object errorData) {
+    public BaseException(IResultCode code, String message, Object errorData) {
         super(message);
         this.code = code;
         this.errorData = errorData;

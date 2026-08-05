@@ -43,17 +43,6 @@ public abstract class AbstractGlobalExceptionHandler implements Ordered {
         return result;
     }
 
-    protected Result<Object> buildResult(Exception exception, String message) {
-        if (exception instanceof BaseException baseException) {
-            return ResultCode.SYS_ERROR.bindResult(baseException.errorData)
-                    .bindMsg(message)
-                    .bindCode(baseException.code.getCode());
-        }
-        return ResultCode.SYS_ERROR.bindResult()
-                .bindMsg(message)
-                .bindCode(ResultCode.SYS_ERROR.getCode());
-    }
-
     protected String resolveResultMessage(Exception exception) {
         if (exception instanceof BindException bindException) {
             return this.resolveBindMessage(bindException);
@@ -78,6 +67,17 @@ public abstract class AbstractGlobalExceptionHandler implements Ordered {
             }
         }
         return errorMessage.toString();
+    }
+
+    protected Result<Object> buildResult(Exception exception, String message) {
+        if (exception instanceof BaseException baseException) {
+            return ResultCode.SYS_ERROR.bindResult(baseException.errorData)
+                    .bindMsg(message)
+                    .bindCode(baseException.code.getCode());
+        }
+        return ResultCode.SYS_ERROR.bindResult()
+                .bindMsg(message)
+                .bindCode(ResultCode.SYS_ERROR.getCode());
     }
 
     protected void writeExceptionLog(HttpServletRequest request, String message, Exception exception) {

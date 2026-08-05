@@ -1,8 +1,8 @@
 package cn.hdfk7.boot.starter.common.exception;
 
 import cn.hdfk7.boot.proto.base.exception.BaseException;
+import cn.hdfk7.boot.proto.base.result.Result;
 import cn.hdfk7.boot.proto.base.result.ResultCode;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
@@ -11,7 +11,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -38,57 +37,52 @@ public abstract class AbstractGatewayExceptionHandler implements ErrorWebExcepti
             return Mono.error(throwable);
         }
 
-        if (throwable instanceof ResponseStatusException responseStatusException) {
-            response.setStatusCode(responseStatusException.getStatusCode());
-        }
-
         return response.writeWith(Mono.fromSupplier(() -> this.buildResponseBuffer(response, request, throwable)));
     }
 
     protected DataBuffer buildResponseBuffer(ServerHttpResponse response, ServerHttpRequest request, Throwable throwable) {
-        String message = this.resolveResultMessage(response, request, throwable);
-        int resultCode = this.resolveResultCode(throwable);
-        this.writeExceptionLog(response, request, message, throwable);
+        String message = this.resolveResultMessage(request, throwable);
+        Result<Object> result = this.buildResult(throwable, message);
+        this.writeExceptionLog(request, message, throwable);
 
-        String body = JSONUtil.toJsonStr(ResultCode.SYS_ERROR.bindResult()
-                .bindMsg(message)
-                .bindCode(resultCode));
+        String body = JSONUtil.toJsonStr(result);
         DataBufferFactory bufferFactory = response.bufferFactory();
         return bufferFactory.wrap(body.getBytes(StandardCharsets.UTF_8));
     }
 
-    protected int resolveResultCode(Throwable throwable) {
+    protected String resolveResultMessage(ServerHttpRequest request, Throwable throwable) {
+        if (throwable instanceof ResponseStatusException) {
+            return String.format("No handler found for %s %s", request.getMethod().name().toUpperCase(Locale.ROOT), request.getURI().getPath());
+        }
+        if (isWarnException(throwable)) {
+            return throwable.getMessage();
+        }
+        return ResultCode.SYS_ERROR.getMsg();
+    }
+
+    protected Result<Object> buildResult(Throwable throwable, String message) {
         if (throwable instanceof BaseException baseException) {
-            return baseException.code.getCode();
+            return ResultCode.SYS_ERROR.bindResult(baseException.errorData)
+                    .bindMsg(message)
+                    .bindCode(baseException.code.getCode());
         }
-        return ResultCode.SYS_ERROR.getCode();
+        return ResultCode.SYS_ERROR.bindResult()
+                .bindMsg(message)
+                .bindCode(ResultCode.SYS_ERROR.getCode());
     }
 
-    protected String resolveResultMessage(ServerHttpResponse response, ServerHttpRequest request, Throwable throwable) {
-        if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
-            return String.format("No handler found for %s %s",
-                    request.getMethod().name().toUpperCase(Locale.ROOT),
-                    request.getURI().getPath());
-        }
-        if (StrUtil.isEmpty(throwable.getMessage())) {
-            return ResultCode.SYS_ERROR.getMsg();
-        }
-        return throwable.getMessage();
-    }
-
-    protected void writeExceptionLog(ServerHttpResponse response, ServerHttpRequest request, String message, Throwable throwable) {
+    protected void writeExceptionLog(ServerHttpRequest request, String message, Throwable throwable) {
         String httpMethod = request.getMethod().name().toUpperCase(Locale.ROOT);
         String url = request.getURI().getPath();
-        if (isWarnException(response, throwable)) {
+        if (isWarnException(throwable)) {
             log.warn("{}:{} {}", httpMethod, url, message);
         } else {
             log.error("{}:{} {}", httpMethod, url, message, throwable);
         }
     }
 
-    protected boolean isWarnException(ServerHttpResponse response, Throwable throwable) {
-        return response.getStatusCode() == HttpStatus.NOT_FOUND
-                || throwable instanceof ResponseStatusException
+    protected boolean isWarnException(Throwable throwable) {
+        return throwable instanceof ResponseStatusException
                 || throwable instanceof BaseException;
     }
 
