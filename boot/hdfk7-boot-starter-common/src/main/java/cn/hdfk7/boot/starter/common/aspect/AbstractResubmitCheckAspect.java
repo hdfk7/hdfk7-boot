@@ -62,11 +62,13 @@ public abstract class AbstractResubmitCheckAspect implements Ordered {
         if (!lock.tryLock()) {
             throw new ResubmitException();
         }
-        Object ret = joinPoint.proceed();
-        if (lock.isHeldByCurrentThread()) {
-            lock.unlock();
+        try {
+            return joinPoint.proceed();
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
-        return ret;
     }
 
     @Override
