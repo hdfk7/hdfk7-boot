@@ -6,7 +6,6 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.alibaba.nacos.api.naming.pojo.ServiceInfo;
 import com.alibaba.nacos.common.utils.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,30 +32,23 @@ public class NacosServiceLookup {
         }
     }
 
-    public void subscribeIfNecessary(String serviceName, EventListener eventListener) throws NacosException {
-        if (StringUtils.isBlank(serviceName) || hasRegisteredListener(serviceName)) {
+    public void subscribe(String serviceName, EventListener eventListener) throws NacosException {
+        if (StringUtils.isBlank(serviceName)) {
             return;
         }
         String groupName = nacosDiscoveryProperties.getGroup();
         namingService().subscribe(serviceName, groupName, eventListener);
     }
 
-    private boolean hasRegisteredListener(String serviceName) throws NacosException {
-        String groupName = nacosDiscoveryProperties.getGroup();
-        return namingService()
-                .getSubscribeServices()
-                .stream()
-                .anyMatch(serviceInfo -> isSameService(serviceInfo, serviceName, groupName));
+    public void unsubscribe(String serviceName, EventListener eventListener) {
+        try {
+            namingService().unsubscribe(serviceName, nacosDiscoveryProperties.getGroup(), eventListener);
+        } catch (NacosException e) {
+            log.warn("Failed to unsubscribe nacos service, serviceName={}, error={}", serviceName, e.getMessage());
+        }
     }
 
     private NamingService namingService() throws NacosException {
         return nacosServiceManager.getNamingService();
-    }
-
-    private boolean isSameService(ServiceInfo serviceInfo, String serviceName, String groupName) {
-        String groupedServiceName = groupName + "@@" + serviceName;
-        return (serviceName.equals(serviceInfo.getName()) && groupName.equals(serviceInfo.getGroupName()))
-                || groupedServiceName.equals(serviceInfo.getName())
-                || groupedServiceName.equals(serviceInfo.getKeyWithoutClusters());
     }
 }

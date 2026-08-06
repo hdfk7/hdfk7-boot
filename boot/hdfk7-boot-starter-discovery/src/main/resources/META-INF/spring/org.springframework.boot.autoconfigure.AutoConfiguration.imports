@@ -1,6 +1,6 @@
 cn.hdfk7.boot.starter.discovery.autoconfigure.BootStarterDiscoveryAutoConfiguration
 cn.hdfk7.boot.starter.discovery.autoconfigure.NacosServiceLookupAutoConfiguration
-cn.hdfk7.boot.starter.discovery.autoconfigure.RestTemplateAutoConfiguration
+cn.hdfk7.boot.starter.discovery.autoconfigure.LoadBalancedRestTemplateAutoConfiguration
 cn.hdfk7.boot.starter.discovery.autoconfigure.ScalarAutoConfiguration
 cn.hdfk7.boot.starter.discovery.autoconfigure.GatewayLoadBalancerEventListenerAutoConfiguration
 cn.hdfk7.boot.starter.discovery.autoconfigure.LoadBalancerEventListenerAutoConfiguration

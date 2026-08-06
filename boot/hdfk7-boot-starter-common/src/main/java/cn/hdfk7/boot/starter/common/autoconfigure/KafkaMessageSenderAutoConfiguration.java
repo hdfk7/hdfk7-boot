@@ -9,7 +9,7 @@ import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.core.KafkaTemplate;
 
-@AutoConfiguration(after = KafkaAutoConfiguration.class)
+@AutoConfiguration(after = {KafkaAutoConfiguration.class})
 @ConditionalOnBean(value = {KafkaTemplate.class})
 @ConditionalOnClass(value = {KafkaTemplate.class})
 public class KafkaMessageSenderAutoConfiguration {

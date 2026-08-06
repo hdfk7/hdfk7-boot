@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "xxl.job")
 public class XxlJobProperties {
+    private boolean enabled;
     private String adminAddresses;
     private String accessToken;
     private int timeout;

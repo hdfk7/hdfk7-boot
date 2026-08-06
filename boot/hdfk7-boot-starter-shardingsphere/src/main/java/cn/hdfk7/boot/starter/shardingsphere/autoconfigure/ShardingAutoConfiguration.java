@@ -17,15 +17,14 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
-@AutoConfiguration(before = DataSourceAutoConfiguration.class)
+@AutoConfiguration(before = {DataSourceAutoConfiguration.class})
 @ConditionalOnClass(YamlShardingSphereDataSourceFactory.class)
 @ConditionalOnProperty(prefix = "spring.shardingsphere", name = "raw")
 @EnableConfigurationProperties(ShardingSphereProperties.class)
 public class ShardingAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(DataSource.class)
-    public DataSource shardingSphereDataSource(ShardingSphereProperties properties, Environment environment)
-            throws SQLException, IOException {
+    public DataSource shardingSphereDataSource(ShardingSphereProperties properties, Environment environment) throws SQLException, IOException {
         String raw = properties.getRaw();
         if (!StringUtils.hasText(raw)) {
             throw new IllegalArgumentException("spring.shardingsphere.raw must not be blank");

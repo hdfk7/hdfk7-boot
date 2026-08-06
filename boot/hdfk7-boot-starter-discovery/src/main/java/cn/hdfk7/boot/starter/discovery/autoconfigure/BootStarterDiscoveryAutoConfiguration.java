@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration;
 
-@AutoConfiguration(before = LoadBalancerAutoConfiguration.class)
+@AutoConfiguration(before = {LoadBalancerAutoConfiguration.class})
 @EnableConfigurationProperties({
         AppProperties.class
 })

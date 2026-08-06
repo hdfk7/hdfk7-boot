@@ -15,4 +15,6 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface ResubmitCheck {
     RequestMethod[] methods() default {RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE};
+
+    long cooldownMillis() default 1000L;
 }

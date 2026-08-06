@@ -1,5 +1,6 @@
 package cn.hdfk7.boot.starter.common.aspect;
 
+import cn.hdfk7.boot.starter.common.constants.HttpHeaderConst;
 import cn.hdfk7.boot.starter.common.constants.RequestParamConst;
 import cn.hdfk7.boot.starter.common.web.ClientIpResolver;
 import cn.hutool.core.util.ObjUtil;
@@ -42,7 +43,7 @@ public abstract class AbstractLogAspect implements Ordered {
 
         String url = sra.getRequest().getRequestURL().toString();
         String method = sra.getRequest().getMethod();
-        String host = clientIpResolver.getIpAddress(request);
+        String host = clientIpResolver.getIpAddress(request.getHeader(HttpHeaderConst.X_REAL_IP), request.getRemoteAddr());
         int port = request.getRemotePort();
         log.debug("method={},url={},host={},port={}", method, url, host, port);
     }
@@ -72,7 +73,7 @@ public abstract class AbstractLogAspect implements Ordered {
 
         String url = request.getRequestURL().toString();
         String method = request.getMethod();
-        String host = clientIpResolver.getIpAddress(request);
+        String host = clientIpResolver.getIpAddress(request.getHeader(HttpHeaderConst.X_REAL_IP), request.getRemoteAddr());
         int port = request.getRemotePort();
 
         log.debug("method={},url={},host={},port={},cost={},parameters={},response={}", method, url, host, port, cost, parameters, response);

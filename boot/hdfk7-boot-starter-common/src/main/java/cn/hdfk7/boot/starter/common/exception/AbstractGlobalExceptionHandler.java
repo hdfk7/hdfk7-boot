@@ -4,6 +4,7 @@ import cn.hdfk7.boot.proto.base.exception.BaseException;
 import cn.hdfk7.boot.proto.base.result.Result;
 import cn.hdfk7.boot.proto.base.result.ResultCode;
 import cn.hdfk7.boot.starter.common.aspect.AbstractLogAspect;
+import cn.hdfk7.boot.starter.common.constants.HttpHeaderConst;
 import cn.hdfk7.boot.starter.common.web.ClientIpResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -44,6 +45,9 @@ public abstract class AbstractGlobalExceptionHandler implements Ordered {
     }
 
     protected String resolveResultMessage(Exception exception) {
+        if (exception instanceof NoResourceFoundException) {
+            return "404 NOT_FOUND";
+        }
         if (exception instanceof BindException bindException) {
             return this.resolveBindMessage(bindException);
         }
@@ -83,7 +87,7 @@ public abstract class AbstractGlobalExceptionHandler implements Ordered {
     protected void writeExceptionLog(HttpServletRequest request, String message, Exception exception) {
         String method = request.getMethod();
         String url = request.getRequestURL().toString();
-        String host = clientIpResolver.getIpAddress(request);
+        String host = clientIpResolver.getIpAddress(request.getHeader(HttpHeaderConst.X_REAL_IP), request.getRemoteAddr());
         int port = request.getRemotePort();
         if (isWarnException(exception)) {
             log.warn("method={},url={},host={},port={},msg={}", method, url, host, port, message);

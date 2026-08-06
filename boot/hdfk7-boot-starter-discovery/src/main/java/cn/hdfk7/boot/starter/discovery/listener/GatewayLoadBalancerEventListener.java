@@ -1,31 +1,23 @@
 package cn.hdfk7.boot.starter.discovery.listener;
 
-import com.alibaba.nacos.api.naming.listener.Event;
+import cn.hdfk7.boot.starter.discovery.service.NacosServiceLookup;
+import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
+import com.alibaba.cloud.nacos.discovery.NacosServiceDiscovery;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
-import org.springframework.context.event.EventListener;
+import org.springframework.cloud.loadbalancer.cache.LoadBalancerCacheManager;
+import org.springframework.context.ApplicationEventPublisher;
 
-@Slf4j
 public class GatewayLoadBalancerEventListener extends AbstractLoadBalancerEventListener {
-    @Override
-    protected boolean shouldAutoStart() {
-        return false;
-    }
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    @EventListener
-    public void onApplicationReady(ApplicationReadyEvent event) {
-        if (!isRunning()) {
-            start();
-        }
+    public GatewayLoadBalancerEventListener(LoadBalancerCacheManager loadBalancerCacheManager, NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceDiscovery nacosServiceDiscovery, NacosServiceLookup nacosServiceLookup, ApplicationEventPublisher applicationEventPublisher) {
+        super(loadBalancerCacheManager, nacosDiscoveryProperties, nacosServiceDiscovery, nacosServiceLookup);
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
-    public void onEvent(Event event) {
-        super.onEvent(event);
-        if (isRunning() && event instanceof NamingEvent e) {
-            applicationEventPublisher.publishEvent(new RefreshRoutesEvent(e));
-        }
+    protected void onNamingEvent(NamingEvent event) {
+        applicationEventPublisher.publishEvent(new RefreshRoutesEvent(event));
     }
 }

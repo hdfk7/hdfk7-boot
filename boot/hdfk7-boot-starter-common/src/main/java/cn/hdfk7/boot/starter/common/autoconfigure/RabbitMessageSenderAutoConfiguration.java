@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
-@AutoConfiguration(after = RabbitAutoConfiguration.class)
+@AutoConfiguration(after = {RabbitAutoConfiguration.class})
 @ConditionalOnBean(RabbitTemplate.class)
 @ConditionalOnClass(RabbitTemplate.class)
 public class RabbitMessageSenderAutoConfiguration {

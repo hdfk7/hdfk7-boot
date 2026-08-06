@@ -1,9 +1,7 @@
 package cn.hdfk7.boot.starter.common.id;
 
 import cn.hutool.core.date.SystemClock;
-import cn.hutool.core.util.ObjUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,9 +19,10 @@ public class SnowflakeIdGenerator {
     // 最大时钟回拨毫秒数
     private static final long CLOCK_BACK_MAX = 5L;
 
-    private static final long MAX_REDIS_ID = Integer.MAX_VALUE;
+    private static final long NODE_BITS = WORKER_BITS + DC_BITS;
+    private static final long NODE_COUNT = 1L << NODE_BITS;
 
-    private final String app;
+    private final String applicationName;
     private final StringRedisTemplate redis;
 
     // 机器 ID
@@ -35,31 +34,22 @@ public class SnowflakeIdGenerator {
     // 上次生成 ID 的时间戳
     private long lastTime = -1L;
 
-    public SnowflakeIdGenerator(@Value("${spring.application.name}") String app, StringRedisTemplate redis) {
-        this.app = app;
+    public SnowflakeIdGenerator(String applicationName, StringRedisTemplate redis) {
+        this.applicationName = applicationName;
         this.redis = redis;
-        this.dcId = this.nextDcId();
-        this.workerId = this.nextWorkerId();
+        long nodeId = nextNodeId();
+        this.dcId = nodeId >> WORKER_BITS;
+        this.workerId = nodeId & max(WORKER_BITS);
     }
 
-    protected long nextWorkerId() {
-        Long id = redis.opsForValue().increment(redisKey("workerId"));
-        log.debug("workerId:{}", id);
-        if (ObjUtil.isNull(id) || id >= MAX_REDIS_ID) {
-            id = 1L;
-            redis.opsForValue().set(redisKey("workerId"), String.valueOf(id));
+    protected long nextNodeId() {
+        Long sequence = redis.opsForValue().increment(redisKey());
+        if (sequence == null) {
+            throw new IllegalStateException("Failed to allocate snowflake node ID from Redis");
         }
-        return id % (max(WORKER_BITS) + 1);
-    }
-
-    protected long nextDcId() {
-        Long id = redis.opsForValue().increment(redisKey("dataCenterId"));
-        log.debug("dcId:{}", id);
-        if (ObjUtil.isNull(id) || id >= MAX_REDIS_ID) {
-            id = 1L;
-            redis.opsForValue().set(redisKey("dataCenterId"), String.valueOf(id));
-        }
-        return id % (max(DC_BITS) + 1);
+        long nodeId = Math.floorMod(sequence - 1, NODE_COUNT);
+        log.debug("snowflake nodeId:{}, sequence:{}", nodeId, sequence);
+        return nodeId;
     }
 
     public String nextIdStr() {
@@ -73,15 +63,16 @@ public class SnowflakeIdGenerator {
             if (offset <= CLOCK_BACK_MAX) {
                 try {
                     wait(offset << 1);
-                    time = now();
-                    if (time < lastTime) {
-                        throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("Interrupted while waiting for clock recovery", e);
+                }
+                time = now();
+                if (time < lastTime) {
+                    throw new IllegalStateException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
                 }
             } else {
-                throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                throw new IllegalStateException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds", offset));
             }
         }
 
@@ -118,7 +109,7 @@ public class SnowflakeIdGenerator {
         return ~(-1L << bits);
     }
 
-    private String redisKey(String name) {
-        return "sequence:" + app + ":" + name;
+    private String redisKey() {
+        return "sequence:" + applicationName + ":" + "nodeId";
     }
 }
