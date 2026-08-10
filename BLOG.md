@@ -66,7 +66,7 @@
 <parent>
     <groupId>cn.hdfk7.boot</groupId>
     <artifactId>hdfk7-boot-parent</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.0.1-SNAPSHOT</version>
 </parent>
 ```
 
@@ -152,7 +152,7 @@ SentinelMvcBlockExceptionHandlerAutoConfiguration
 ```text
 BootStarterDiscoveryAutoConfiguration
 NacosServiceLookupAutoConfiguration
-RestTemplateAutoConfiguration
+LoadBalancedRestTemplateAutoConfiguration
 ScalarAutoConfiguration
 GatewayLoadBalancerEventListenerAutoConfiguration
 LoadBalancerEventListenerAutoConfiguration
@@ -253,10 +253,15 @@ spring:
 springdoc:
   api-docs:
     enabled: true
+    version: OPENAPI_3_0
 scalar:
   discovery:
     enabled: true
 ```
+
+当前框架使用 Springdoc OpenAPI 3.1.0。示例显式生成 OpenAPI 3.0 文档，是为了规避 Springdoc 3.1.0 在部分 OpenAPI 3.1 Schema 转换路径产生的回退 WARN；这不影响常用 Swagger 注解。后续确认兼容后，可将 `version` 改为 `OPENAPI_3_1`。
+
+需要注意的是，Sentinel Dashboard 默认将规则保存在客户端内存，本项目中的 Sentinel 自动配置只负责 WebMVC 和 Gateway 的限流异常返回，不负责规则持久化。生产环境应通过 Nacos 等动态数据源持久化规则，并使用 Push 模式同步到客户端。
 
 网关侧可以通过继承 `AbstractGatewayFilter` 实现统一过滤逻辑，也可以通过继承 `AbstractGatewayExceptionHandler` 实现 WebFlux 网关异常统一输出。
 

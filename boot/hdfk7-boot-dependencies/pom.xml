@@ -41,24 +41,25 @@
     <properties>
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
 
-        <hdfk7-boot-proto.version>${revision}${changelist}</hdfk7-boot-proto.version>
-        <hdfk7-boot-starter-code-generator.version>${revision}${changelist}</hdfk7-boot-starter-code-generator.version>
-        <hdfk7-boot-starter-shardingsphere.version>${revision}${changelist}</hdfk7-boot-starter-shardingsphere.version>
-        <hdfk7-boot-starter-common.version>${revision}${changelist}</hdfk7-boot-starter-common.version>
-        <hdfk7-boot-starter-discovery.version>${revision}${changelist}</hdfk7-boot-starter-discovery.version>
+        <hdfk7-boot.version>${revision}${changelist}</hdfk7-boot.version>
+        <hdfk7-boot-base-proto.version>${hdfk7-boot.version}</hdfk7-boot-base-proto.version>
+        <hdfk7-boot-starter-code-generator.version>${hdfk7-boot.version}</hdfk7-boot-starter-code-generator.version>
+        <hdfk7-boot-starter-shardingsphere.version>${hdfk7-boot.version}</hdfk7-boot-starter-shardingsphere.version>
+        <hdfk7-boot-starter-common.version>${hdfk7-boot.version}</hdfk7-boot-starter-common.version>
+        <hdfk7-boot-starter-discovery.version>${hdfk7-boot.version}</hdfk7-boot-starter-discovery.version>
 
         <spring-cloud.version>2025.1.2</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
 
-        <redisson.version>4.6.1</redisson.version>
+        <redisson.version>4.7.0</redisson.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <swagger-models.version>2.2.52</swagger-models.version>
-        <springdoc.version>3.0.3</springdoc.version>
+        <swagger-annotations.version>2.2.53</swagger-annotations.version>
+        <springdoc-openapi.version>3.1.0</springdoc-openapi.version>
         <mybatis-plus.version>3.5.17</mybatis-plus.version>
-        <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
+        <shardingsphere.version>5.5.3</shardingsphere.version>
         <hutool.version>5.8.47</hutool.version>
-        <jsonwebtoken.jjwt.version>0.13.0</jsonwebtoken.jjwt.version>
+        <jjwt.version>0.13.0</jjwt.version>
         <xxl-job.version>3.4.2</xxl-job.version>
         <commons-fileupload.version>1.6.0</commons-fileupload.version>
         <easyexcel.version>4.0.3</easyexcel.version>
@@ -83,14 +84,6 @@
             </dependency>
 
             <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-bom</artifactId>
-                <version>${swagger-models.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-bom</artifactId>
                 <version>${hutool.version}</version>
@@ -109,7 +102,7 @@
             <dependency>
                 <groupId>cn.hdfk7.boot</groupId>
                 <artifactId>hdfk7-boot-base-proto</artifactId>
-                <version>${hdfk7-boot-proto.version}</version>
+                <version>${hdfk7-boot-base-proto.version}</version>
             </dependency>
 
             <dependency>
@@ -143,6 +136,12 @@
             </dependency>
 
             <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
                 <version>${redisson.version}</version>
@@ -169,49 +168,49 @@
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-jdbc</artifactId>
-                <version>${shardingsphere-jdbc.version}</version>
+                <version>${shardingsphere.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-sharding-core</artifactId>
-                <version>${shardingsphere-jdbc.version}</version>
+                <version>${shardingsphere.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-engine-mysql</artifactId>
-                <version>${shardingsphere-jdbc.version}</version>
+                <version>${shardingsphere.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-infra-data-source-pool-hikari</artifactId>
-                <version>${shardingsphere-jdbc.version}</version>
+                <version>${shardingsphere.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-standalone-mode-core</artifactId>
-                <version>${shardingsphere-jdbc.version}</version>
+                <version>${shardingsphere.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-standalone-mode-repository-memory</artifactId>
-                <version>${shardingsphere-jdbc.version}</version>
+                <version>${shardingsphere.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-authority-simple</artifactId>
-                <version>${shardingsphere-jdbc.version}</version>
+                <version>${shardingsphere.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
-                <version>${jsonwebtoken.jjwt.version}</version>
+                <version>${jjwt.version}</version>
             </dependency>
 
             <dependency>
@@ -235,13 +234,13 @@
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-scalar</artifactId>
-                <version>${springdoc.version}</version>
+                <version>${springdoc-openapi.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webflux-scalar</artifactId>
-                <version>${springdoc.version}</version>
+                <version>${springdoc-openapi.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
