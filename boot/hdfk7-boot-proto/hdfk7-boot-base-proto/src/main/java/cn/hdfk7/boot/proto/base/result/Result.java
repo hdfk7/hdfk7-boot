@@ -1,7 +1,6 @@
 package cn.hdfk7.boot.proto.base.result;
 
 import cn.hdfk7.boot.proto.base.model.BaseModel;
-import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -24,38 +23,57 @@ public class Result<T> extends BaseModel {
     private T data;
 
     public Result() {
-        this(ResultCode.SUCCESS);
+        this.code = ResultCode.SUCCESS.getCode();
+        this.msg = ResultCode.SUCCESS.getMsg();
     }
 
-    public Result(ResultCode resultCode) {
-        this(resultCode, null);
+    public static Result<Void> success() {
+        return success(null);
     }
 
-    public Result(ResultCode resultCode, String message) {
-        this(resultCode, message, null);
+    public static <T> Result<T> success(T data) {
+        return success(data, null);
     }
 
-    public Result(ResultCode resultCode, String message, T data) {
-        bindCode(resultCode.getCode()).bindMsg(StrUtil.isEmpty(message) ? resultCode.getMsg() : message).bindData(data);
+    public static <T> Result<T> success(T data, String msg) {
+        return of(ResultCode.SUCCESS, data, msg);
     }
 
-    public Result<T> bindData(T data) {
-        this.data = data;
-        return this;
+    public static Result<Void> failure() {
+        return failure(null);
     }
 
-    public Result<T> bindMsg(String msg) {
-        this.msg = msg;
-        return this;
+    public static <T> Result<T> failure(T data) {
+        return failure(data, null);
     }
 
-    public Result<T> bindCode(int code) {
-        this.code = code;
-        return this;
+    public static <T> Result<T> failure(T data, String msg) {
+        return of(ResultCode.SYS_ERROR, data, msg);
+    }
+
+    public static <T> Result<T> of(IResultCode resultCode) {
+        return of(resultCode, null);
+    }
+
+    public static <T> Result<T> of(IResultCode resultCode, T data) {
+        return of(resultCode, data, null);
+    }
+
+    public static <T> Result<T> of(IResultCode resultCode, T data, String msg) {
+        Result<T> result = new Result<>();
+        result.code = resultCode.getCode();
+        result.data = data;
+        result.msg = msg != null ? msg : resultCode.getMsg();
+        return result;
     }
 
     @JsonIgnore
     public boolean isSuccess() {
         return this.code == ResultCode.SUCCESS.getCode();
+    }
+
+    @JsonIgnore
+    public boolean isFailure() {
+        return !isSuccess();
     }
 }

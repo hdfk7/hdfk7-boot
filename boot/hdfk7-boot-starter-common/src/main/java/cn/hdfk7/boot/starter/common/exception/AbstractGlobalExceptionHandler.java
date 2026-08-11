@@ -75,13 +75,9 @@ public abstract class AbstractGlobalExceptionHandler implements Ordered {
 
     protected Result<Object> buildResult(Exception exception, String message) {
         if (exception instanceof BaseException baseException) {
-            return ResultCode.SYS_ERROR.bindResult(baseException.errorData)
-                    .bindMsg(message)
-                    .bindCode(baseException.code.getCode());
+            return baseException.getResultCode().toResult(baseException.getErrorData(), message);
         }
-        return ResultCode.SYS_ERROR.bindResult()
-                .bindMsg(message)
-                .bindCode(ResultCode.SYS_ERROR.getCode());
+        return ResultCode.SYS_ERROR.toResult(null, message);
     }
 
     protected void writeExceptionLog(HttpServletRequest request, String message, Exception exception) {

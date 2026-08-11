@@ -15,6 +15,6 @@ public class SentinelGatewayBlockRequestHandler implements BlockRequestHandler {
     public Mono<ServerResponse> handleRequest(ServerWebExchange serverWebExchange, Throwable throwable) {
         return ServerResponse.status(HttpStatus.TOO_MANY_REQUESTS)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(JSONUtil.toJsonStr(ResultCode.SERVICE_DOWNGRADE_ERROR.bindResult())));
+                .body(BodyInserters.fromValue(JSONUtil.toJsonStr(ResultCode.SERVICE_DOWNGRADE_ERROR.toResult())));
     }
 }

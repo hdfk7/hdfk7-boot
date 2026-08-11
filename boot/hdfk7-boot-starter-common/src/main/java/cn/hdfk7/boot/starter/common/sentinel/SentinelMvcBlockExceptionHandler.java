@@ -15,10 +15,10 @@ public class SentinelMvcBlockExceptionHandler implements BlockExceptionHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, String resourceName, BlockException e) throws Exception {
         int status = HttpStatus.TOO_MANY_REQUESTS.value();
-        Result<Void> result = ResultCode.SERVICE_DOWNGRADE_ERROR.bindResult();
+        Result<Void> result = ResultCode.SERVICE_DOWNGRADE_ERROR.toResult();
         if (e instanceof AuthorityException) {
             status = HttpStatus.UNAUTHORIZED.value();
-            result = ResultCode.UNAUTHORIZED_ERROR.bindResult();
+            result = ResultCode.UNAUTHORIZED_ERROR.toResult();
         }
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
         response.setStatus(status);
