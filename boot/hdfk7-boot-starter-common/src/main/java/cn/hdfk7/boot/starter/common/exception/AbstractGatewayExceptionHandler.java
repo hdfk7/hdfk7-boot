@@ -13,6 +13,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -59,7 +60,7 @@ public abstract class AbstractGatewayExceptionHandler implements ErrorWebExcepti
     }
 
     protected String resolveResultMessage(Throwable throwable) {
-        if (throwable instanceof ResponseStatusException) {
+        if (throwable instanceof ResponseStatusException responseStatusException && responseStatusException.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
             return "404 NOT_FOUND";
         }
         if (isWarnException(throwable)) {
