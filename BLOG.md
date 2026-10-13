@@ -312,11 +312,19 @@ example/service/src/test/java/cn/hdfk7/app/service/CodeGenerator.java
 </dependency>
 ```
 
-starter 内置半年分表算法，业务配置中的 `algorithmClassName` 可以改为：
+starter 内置半年和按月分表算法，业务配置使用 `CLASS_BASED` 类型和 `STANDARD` 策略。半年算法配置如下：
 
 ```yaml
 algorithmClassName: cn.hdfk7.boot.starter.shardingsphere.algorithm.HalfYearRangeShardingAlgorithm
 ```
+
+半年表名为 `example_record_2026_1`、`example_record_2026_2`，分别对应 1～6 月和 7～12 月。按月分表使用 `cn.hdfk7.boot.starter.shardingsphere.algorithm.MonthRangeShardingAlgorithm`，表名为 `example_record_202601`、`example_record_202610`，月份补齐两位。
+
+两个算法支持 Java 时间 API、传统日期对象和毫秒时间戳，处理范围开闭边界，并在精确路由时校验目标表是否已配置。公共时间转换和范围筛选逻辑统一收敛到 `ShardingUtils`，各算法保留自己的表名规则。
+
+例如按月查询 `< 2026-11-01 00:00:00` 时不会额外查询 11 月表；半年查询 `< 2026-07-01 00:00:00` 时不会额外查询下半年表。分表依据配置的分片字段，而不是对象中的任意时间字段。
+
+配置中心的更新不会自动重建当前数据源，修改分片规则或节点后需重启服务。完整配置片段和时间类型说明见 [README](README.md)。
 
 ## 十二、项目亮点
 

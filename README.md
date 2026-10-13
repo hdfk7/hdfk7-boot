@@ -158,11 +158,49 @@ ShardingSphere starter 聚合 JDBC、分片、MySQL SQL Parser、Hikari 数据�
 </dependency>
 ```
 
-内置半年分表算法：
+内置半年和按月分表算法：
+
+| 算法 | 表名规则 | 示例 |
+| --- | --- | --- |
+| `HalfYearRangeShardingAlgorithm` | `逻辑表名_年份_半年序号`，1～6 月为 1，7～12 月为 2 | `example_record_2026_1`、`example_record_2026_2` |
+| `MonthRangeShardingAlgorithm` | `逻辑表名_yyyyMM`，月份补齐两位 | `example_record_202601`、`example_record_202610` |
+
+下面是放入 `spring.shardingsphere.raw` 的按月分片规则片段；`dataSources` 需另行配置名为 `ds` 的实际数据源：
 
 ```yaml
+rules:
+  - !SHARDING
+    tables:
+      example_record:
+        actualDataNodes: "ds.example_record_$->{2023..2026}$->{['01','02','03','04','05','06','07','08','09','10','11','12']}"
+        tableStrategy:
+          standard:
+            shardingColumn: partition_time
+            shardingAlgorithmName: month-sharding-algorithm
+    shardingAlgorithms:
+      month-sharding-algorithm:
+        type: CLASS_BASED
+        props:
+          strategy: STANDARD
+          algorithmClassName: cn.hdfk7.boot.starter.shardingsphere.algorithm.MonthRangeShardingAlgorithm
+```
+
+若使用半年分表，替换节点表达式和算法类名，并保持 `shardingAlgorithmName` 与 `shardingAlgorithms` 下的名称一致：
+
+```yaml
+actualDataNodes: ds.example_record_$->{2023..2026}_$->{1..2}
 algorithmClassName: cn.hdfk7.boot.starter.shardingsphere.algorithm.HalfYearRangeShardingAlgorithm
 ```
+
+两个算法支持 `LocalDateTime`、`LocalDate`、`OffsetDateTime`、`ZonedDateTime`、`Instant`、`Date`（含 JDBC `Date` 和 `Timestamp`）以及 `Long` 毫秒时间戳；字符串应在业务入口转换为时间对象。`Instant`、`Date` 和毫秒时间戳按服务器默认时区转换，带时区类型使用自身本地日期时间。
+
+精确分片会校验目标表是否已配置，缺失时抛出包含表名的异常。范围分片筛选已配置的表，支持无界范围、空范围和开闭端点。例如 `< 2026-07-01 00:00:00` 不包含下半年表，按月时 `< 2026-11-01 00:00:00` 不包含 11 月表。开区间下界按输入时间类型的精度判断周期末尾。无法按表名规则解析的候选表会保守保留。
+
+分片依据配置的时间字段。示例中的 example_record 和 partition_time 为虚构名称，接入时需替换为业务逻辑表名和分片字段，并提前创建、配置对应的物理表。
+
+公共逻辑统一放在 `ShardingUtils`：两个算法共用时间转换、范围路由、周期边界和目标表校验，算法类保留各自的表名生成及解析规则。
+
+配置可通过 Nacos 导入，但当前自动配置仅在启动时创建数据源；修改分片规则或节点后，需要重启服务才能应用新配置。
 
 ## 示例工程
 
