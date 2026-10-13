@@ -7,9 +7,8 @@ import com.alibaba.nacos.api.naming.listener.Event;
 import com.alibaba.nacos.api.naming.listener.EventListener;
 import com.alibaba.nacos.api.naming.listener.NamingEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.Cache;
-import org.springframework.cloud.loadbalancer.cache.LoadBalancerCacheManager;
-import org.springframework.cloud.loadbalancer.core.CachingServiceInstanceListSupplier;
+import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.SmartLifecycle;
 
 import java.util.Set;
@@ -20,11 +19,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public abstract class AbstractLoadBalancerEventListener implements EventListener, SmartLifecycle {
+public class GatewayRouteRefreshEventListener implements EventListener, SmartLifecycle {
     private static final int PHASE = Integer.MAX_VALUE - 100;
 
     private final Set<String> services = ConcurrentHashMap.newKeySet();
-    private final LoadBalancerCacheManager loadBalancerCacheManager;
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final NacosDiscoveryProperties nacosDiscoveryProperties;
     private final NacosServiceDiscovery nacosServiceDiscovery;
     private final NacosServiceLookup nacosServiceLookup;
@@ -33,8 +32,8 @@ public abstract class AbstractLoadBalancerEventListener implements EventListener
     private ScheduledExecutorService watchExecutor;
     private ScheduledFuture<?> watchTask;
 
-    protected AbstractLoadBalancerEventListener(LoadBalancerCacheManager loadBalancerCacheManager, NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceDiscovery nacosServiceDiscovery, NacosServiceLookup nacosServiceLookup) {
-        this.loadBalancerCacheManager = loadBalancerCacheManager;
+    public GatewayRouteRefreshEventListener(NacosDiscoveryProperties nacosDiscoveryProperties, NacosServiceDiscovery nacosServiceDiscovery, NacosServiceLookup nacosServiceLookup, ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.nacosDiscoveryProperties = nacosDiscoveryProperties;
         this.nacosServiceDiscovery = nacosServiceDiscovery;
         this.nacosServiceLookup = nacosServiceLookup;
@@ -46,7 +45,7 @@ public abstract class AbstractLoadBalancerEventListener implements EventListener
             return;
         }
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(runnable -> {
-            Thread thread = new Thread(runnable, "loadbalancer-service-watcher");
+            Thread thread = new Thread(runnable, "gateway-route-service-watcher");
             thread.setDaemon(true);
             return thread;
         });
@@ -98,19 +97,11 @@ public abstract class AbstractLoadBalancerEventListener implements EventListener
     @Override
     public void onEvent(Event event) {
         if (isRunning() && event instanceof NamingEvent namingEvent) {
-            this.evictServiceInstanceCache(namingEvent.getServiceName());
-            this.onNamingEvent(namingEvent);
+            applicationEventPublisher.publishEvent(new RefreshRoutesEvent(namingEvent));
         }
     }
 
-    private void evictServiceInstanceCache(String serviceName) {
-        Cache cache = loadBalancerCacheManager.getCache(CachingServiceInstanceListSupplier.SERVICE_INSTANCE_CACHE_NAME);
-        if (cache != null) {
-            cache.evict(serviceName);
-        }
-    }
-
-    private void refresh() {
+    private synchronized void refresh() {
         if (!isRunning()) {
             return;
         }
@@ -138,8 +129,5 @@ public abstract class AbstractLoadBalancerEventListener implements EventListener
     private void unsubscribe() {
         services.forEach(serviceName -> nacosServiceLookup.unsubscribe(serviceName, this));
         services.clear();
-    }
-
-    protected void onNamingEvent(NamingEvent event) {
     }
 }

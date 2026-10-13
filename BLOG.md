@@ -154,11 +154,10 @@ BootStarterDiscoveryAutoConfiguration
 NacosServiceLookupAutoConfiguration
 LoadBalancedRestTemplateAutoConfiguration
 ScalarAutoConfiguration
-GatewayLoadBalancerEventListenerAutoConfiguration
-LoadBalancerEventListenerAutoConfiguration
+GatewayRouteRefreshEventListenerAutoConfiguration
 ```
 
-比较有价值的一点是：框架通过监听 Nacos 服务变化事件，在服务上下线时刷新网关路由缓存，使 Gateway 能更及时地感知后端服务变化。
+框架在开启 Gateway 服务发现路由时，独立监听 Nacos 服务变化并刷新网关路由缓存，不依赖 LoadBalancer 缓存开关。普通服务不再创建自定义实例缓存清理监听器。starter 通过 EnvironmentPostProcessor 默认设置 spring.cloud.loadbalancer.cache.enabled=false，直接使用 Nacos 客户端实例缓存；该默认值优先级最低，业务显式配置可覆盖。若显式开启额外缓存，实例变化可能要等待缓存过期才生效。
 
 同时，`ScalarAutoConfiguration` 支持从服务发现中聚合接口文档，让网关可以作为统一 API 文档入口。
 

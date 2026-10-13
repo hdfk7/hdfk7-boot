@@ -97,6 +97,20 @@
 
 `hdfk7-boot-starter-discovery` 直接引入 Nacos Config、Nacos Discovery、OpenFeign 和 LoadBalancer；Gateway 与 Springdoc WebFlux Scalar 为 `provided`，普通服务和网关应按实际 Web 类型显式选择 Springdoc WebMVC/WebFlux 依赖。
 
+网关启用服务发现路由（spring.cloud.gateway.server.webflux.discovery.locator.enabled=true）时，GatewayRouteRefreshEventListener 独立监听 Nacos 服务变化并刷新路由，不依赖 LoadBalancer 缓存。普通服务不再创建自定义实例缓存清理监听器。
+
+starter 默认关闭 LoadBalancer 的额外实例缓存，使用 Nacos 客户端缓存。该默认值通过 EnvironmentPostProcessor 在自动配置之前以最低优先级加入环境，业务配置文件、Nacos 和启动参数可以覆盖。需要显式开启额外缓存时可配置：
+
+~~~yaml
+spring:
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: true
+~~~
+
+显式开启后，实例变化可能要等待 LoadBalancer 缓存过期才生效；框架不再提供实例缓存清理监听器。网关路由刷新不受该开关影响。
+
 ## 基础配置
 
 示例工程使用 Spring Boot Config Data 导入 Nacos 配置：
