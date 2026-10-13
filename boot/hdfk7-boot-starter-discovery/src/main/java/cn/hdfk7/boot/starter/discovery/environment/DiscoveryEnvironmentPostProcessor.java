@@ -9,7 +9,7 @@ import org.springframework.core.env.MapPropertySource;
 import java.util.Map;
 
 public class DiscoveryEnvironmentPostProcessor implements EnvironmentPostProcessor {
-    private static final String PROPERTY_SOURCE_NAME = "hdfk7DiscoveryDefaults";
+    private static final String PROPERTY_SOURCE_NAME = DiscoveryEnvironmentPostProcessor.class.getName();
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, @NonNull SpringApplication application) {
