@@ -1,6 +1,7 @@
 package cn.hdfk7.boot.starter.shardingsphere.algorithm;
 
 import cn.hdfk7.boot.starter.shardingsphere.util.ShardingUtils;
+import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import org.apache.shardingsphere.sharding.api.sharding.standard.PreciseShardingValue;
 import org.apache.shardingsphere.sharding.api.sharding.standard.RangeShardingValue;
@@ -8,45 +9,109 @@ import org.apache.shardingsphere.sharding.api.sharding.standard.StandardSharding
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.function.IntPredicate;
 
-public class HalfYearRangeShardingAlgorithm implements StandardShardingAlgorithm<Long> {
+public class HalfYearRangeShardingAlgorithm implements StandardShardingAlgorithm<Comparable<?>> {
     @Override
-    public String doSharding(Collection<String> collection, PreciseShardingValue<Long> preciseShardingValue) {
+    public String doSharding(Collection<String> collection, PreciseShardingValue<Comparable<?>> preciseShardingValue) {
         String logicTableName = preciseShardingValue.getLogicTableName();
         LocalDate localDate = toLocalDate(preciseShardingValue.getValue());
         String yearTable = ShardingUtils.getYearTable(logicTableName, localDate);
         String halfYear = getHalfYear(localDate);
-        return String.join("_", yearTable, halfYear);
+        String targetTable = String.join("_", yearTable, halfYear);
+        if (!collection.contains(targetTable)) {
+            throw new IllegalArgumentException("Sharding target table is not available: " + targetTable);
+        }
+        return targetTable;
     }
 
     @Override
-    public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<Long> rangeShardingValue) {
-        Range<Long> valueRange = rangeShardingValue.getValueRange();
+    public Collection<String> doSharding(Collection<String> collection, RangeShardingValue<Comparable<?>> rangeShardingValue) {
+        Range<Comparable<?>> valueRange = rangeShardingValue.getValueRange();
         String logicTableName = rangeShardingValue.getLogicTableName();
+        if (valueRange.isEmpty()) {
+            return List.of();
+        }
         if (!valueRange.hasLowerBound() && !valueRange.hasUpperBound()) {
             return List.copyOf(collection);
         }
         if (!valueRange.hasLowerBound()) {
-            int upperPeriod = getPeriod(toLocalDate(valueRange.upperEndpoint()));
+            int upperPeriod = getBoundaryPeriod(valueRange.upperEndpoint(), valueRange.upperBoundType(), false);
             return filterAvailableTables(collection, logicTableName, period -> period <= upperPeriod);
         }
         if (!valueRange.hasUpperBound()) {
-            int lowerPeriod = getPeriod(toLocalDate(valueRange.lowerEndpoint()));
+            int lowerPeriod = getBoundaryPeriod(valueRange.lowerEndpoint(), valueRange.lowerBoundType(), true);
             return filterAvailableTables(collection, logicTableName, period -> period >= lowerPeriod);
         }
 
-        int lowerPeriod = getPeriod(toLocalDate(valueRange.lowerEndpoint()));
-        int upperPeriod = getPeriod(toLocalDate(valueRange.upperEndpoint()));
+        int lowerPeriod = getBoundaryPeriod(valueRange.lowerEndpoint(), valueRange.lowerBoundType(), true);
+        int upperPeriod = getBoundaryPeriod(valueRange.upperEndpoint(), valueRange.upperBoundType(), false);
         return filterAvailableTables(collection, logicTableName, period -> period >= lowerPeriod && period <= upperPeriod);
     }
 
-    private static LocalDate toLocalDate(long timestamp) {
-        return Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDate();
+    private static int getBoundaryPeriod(Comparable<?> value, BoundType boundType, boolean lowerBound) {
+        LocalDateTime dateTime = toLocalDateTime(value);
+        LocalDate date = dateTime.toLocalDate();
+        int period = getPeriod(date);
+        if (boundType == BoundType.CLOSED) {
+            return period;
+        }
+        if (!lowerBound) {
+            boolean firstDay = date.getDayOfMonth() == 1
+                    && (date.getMonthValue() == 1 || date.getMonthValue() == 7);
+            return firstDay && dateTime.toLocalTime().equals(LocalTime.MIDNIGHT) ? period - 1 : period;
+        }
+        boolean lastDay = date.getDayOfMonth() == date.lengthOfMonth()
+                && (date.getMonthValue() == 6 || date.getMonthValue() == 12);
+        boolean dateOnly = value instanceof LocalDate || value instanceof java.sql.Date;
+        LocalTime lastTime = value instanceof Long
+                || (value instanceof Date && !(value instanceof java.sql.Timestamp))
+                ? LocalTime.of(23, 59, 59, 999_000_000) : LocalTime.MAX;
+        return lastDay && (dateOnly || dateTime.toLocalTime().equals(lastTime)) ? period + 1 : period;
+    }
+
+    private static LocalDate toLocalDate(Comparable<?> value) {
+        return toLocalDateTime(value).toLocalDate();
+    }
+
+    private static LocalDateTime toLocalDateTime(Comparable<?> value) {
+        if (value instanceof LocalDate localDate) {
+            return localDate.atStartOfDay();
+        }
+        if (value instanceof LocalDateTime localDateTime) {
+            return localDateTime;
+        }
+        if (value instanceof OffsetDateTime offsetDateTime) {
+            return offsetDateTime.toLocalDateTime();
+        }
+        if (value instanceof ZonedDateTime zonedDateTime) {
+            return zonedDateTime.toLocalDateTime();
+        }
+        if (value instanceof Instant instant) {
+            return instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+        if (value instanceof java.sql.Date sqlDate) {
+            return sqlDate.toLocalDate().atStartOfDay();
+        }
+        if (value instanceof java.sql.Timestamp timestamp) {
+            return timestamp.toLocalDateTime();
+        }
+        if (value instanceof Date date) {
+            return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+        if (value instanceof Long timestamp) {
+            return Instant.ofEpochMilli(timestamp).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+        throw new IllegalArgumentException("Unsupported sharding value type: " + (value == null ? "null" : value.getClass().getName()));
     }
 
     private static String getHalfYear(LocalDate localDate) {
