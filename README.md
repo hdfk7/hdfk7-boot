@@ -1,6 +1,6 @@
 # hdfk7-boot
 
-`hdfk7-boot` 是一套基于 Spring Boot 4.1.0、Spring Cloud 2025.1.2、Spring Cloud Alibaba 2025.1.0.0 和 Java 21 的微服务基础框架。项目通过 BOM、父 POM、公共协议模块和多个 starter 统一依赖版本与基础能力，并提供 Spring MVC 服务和 Gateway 示例。
+`hdfk7-boot` 是一套基于 Spring Boot 4.1.1、Spring Cloud 2025.1.3、Spring Cloud Alibaba 2025.1.0.0 和 Java 21 的微服务基础框架。项目通过 BOM、父 POM、公共协议模块和多个 starter 统一依赖版本与基础能力，并提供 Spring MVC 服务和 Gateway 示例。
 
 ## 功能
 
@@ -13,7 +13,7 @@
 - 统一返回结果、统一异常处理
 - 雪花算法 ID 生成器
 - 日志切面、防重复提交切面
-- Hutool、Jackson、MapStruct、Springdoc OpenAPI 3.1.0、Scalar
+- Hutool、Jackson、MapStruct、Springdoc OpenAPI 3.1.1、Scalar
 - Gateway 和普通 Web 服务示例工程
 
 ## 模块
@@ -43,12 +43,17 @@
 
 | 依赖 | 版本 |
 | --- | --- |
-| Spring Boot | `4.1.0` |
-| Spring Cloud | `2025.1.2` |
+| Spring Boot | `4.1.1` |
+| Spring Cloud | `2025.1.3` |
 | Spring Cloud Alibaba | `2025.1.0.0` |
-| Springdoc OpenAPI | `3.1.0` |
-| Swagger Annotations | `2.2.53` |
+| Springdoc OpenAPI | `3.1.1` |
+| Swagger Annotations | `2.2.55` |
 | Redisson | `4.7.0` |
+| MyBatis-Plus | `3.5.17` |
+| ShardingSphere | `5.5.3` |
+| Hutool | `5.8.47` |
+| MapStruct | `1.6.3` |
+| XXL-JOB | `3.4.2` |
 | Java | `21` |
 
 ## 使用方式
@@ -111,6 +116,8 @@ spring:
 
 显式开启后，实例变化可能要等待 LoadBalancer 缓存过期才生效；框架不再提供实例缓存清理监听器。网关路由刷新不受该开关影响。
 
+通用能力按类路径、Bean 和配置条件启用：雪花 ID 需要 `StringRedisTemplate` 和 `spring.application.name`；Kafka、RabbitMQ 发送器分别依赖 `KafkaTemplate`、`RabbitTemplate`；XXL-JOB 需引入客户端并显式设置 `xxl.job.enabled=true`；MyBatis-Plus 分页需引入对应 starter 和 `mybatis-plus-jsqlparser`。这些中间件依赖在通用 starter 中使用 `provided`，业务工程需按需引入。日志、防重复提交及全局异常处理提供抽象基类，需要业务工程自行继承并注册。
+
 ## 基础配置
 
 示例工程使用 Spring Boot Config Data 导入 Nacos 配置：
@@ -131,7 +138,7 @@ spring:
       - nacos:${spring.application.name}?refreshEnabled=true
 ```
 
-当前使用 Springdoc 3.1.0。项目暂时显式生成 OpenAPI 3.0 文档，以规避 Springdoc 3.1.0 在部分 OpenAPI 3.1 Schema 转换路径产生的回退 WARN：
+当前 BOM 管理 Springdoc 3.1.1。下面是显式选择 OpenAPI 3.0 的配置示例；仓库内两个示例的本地 application.yml 仅包含 Nacos 接入配置，并未设置文档版本：
 
 ```yaml
 springdoc:
@@ -139,14 +146,32 @@ springdoc:
     version: OPENAPI_3_0
 ```
 
-该配置不影响 `@Schema`、`@Operation` 等常用注解。确认后续版本修复并需要 OpenAPI 3.1 特性时，可切换为 `OPENAPI_3_1`。
+该配置不影响 `@Schema`、`@Operation` 等常用注解。需要 OpenAPI 3.1 特性时，可按实际需求切换为 `OPENAPI_3_1`。
 
 网关如需通过服务发现聚合 Scalar 文档，可启用：
 
 ```yaml
 scalar:
+  enabled: true
   discovery:
     enabled: true
+```
+
+聚合自动配置要求 Reactive Web 应用、Gateway 和 Scalar WebFlux 类存在，并已创建 `DiscoveryClient`、`NacosServiceLookup`，同时配置 `spring.application.name`。显式设置 `springdoc.api-docs.enabled=false` 时不启用聚合。
+
+聚合文档保留手动配置的 `scalar.sources`，再按服务名排序追加有健康实例的服务。默认排除网关自身，可通过 `scalar.exclude-self: false` 修改，通过 `scalar.excluded-services` 排除指定服务（忽略大小写）。如果没有显式默认源，第一个源会成为默认源。
+
+自动生成的文档 URL 为 `/{serviceId}/v3/api-docs`，后缀跟随 `springdoc.api-docs.path`，网关需提供对应路由。使用服务发现路由时配置如下：
+
+```yaml
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
 ```
 
 Sentinel Dashboard 默认只把规则推送到客户端内存，服务重启后规则会丢失。本框架提供 WebMVC/Gateway BlockException 返回处理，但不提供 Dashboard 规则持久化；生产环境应使用 Nacos 等动态数据源并采用 Push 模式。
@@ -171,6 +196,8 @@ ShardingSphere starter 聚合 JDBC、分片、MySQL SQL Parser、Hikari 数据�
     <artifactId>hdfk7-boot-starter-shardingsphere</artifactId>
 </dependency>
 ```
+
+`spring.shardingsphere.raw` 使用 YAML `|` 块传入完整的 ShardingSphere YAML 字符串，内部 `${...}` 占位符由 Spring 环境解析。仅在没有其他 `DataSource` Bean 时创建数据源，空白内容会导致启动失败。
 
 内置半年和按月分表算法：
 

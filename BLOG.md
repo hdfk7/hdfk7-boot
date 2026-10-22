@@ -1,4 +1,4 @@
-# 基于 Spring Boot 4.1.0 和 Spring Cloud 2025.1.2 的微服务基础框架 hdfk7-boot
+# 基于 Spring Boot 4.1.1 和 Spring Cloud 2025.1.3 的微服务基础框架 hdfk7-boot
 
 在微服务项目落地时，最耗时间的往往不是业务代码，而是基础能力的重复整合：父 POM 版本管理、注册中心、配置中心、网关、OpenFeign、统一返回、异常处理、日志切面、限流降级、分布式 ID、MyBatis-Plus、接口文档等。
 
@@ -6,7 +6,7 @@
 
 ## 一、项目定位
 
-`hdfk7-boot` 是一套基于 `Spring Boot 4.1.0`、`Spring Cloud 2025.1.2`、`Spring Cloud Alibaba 2025.1.0.0` 和 `Java 21` 构建的微服务项目脚手架与 starter 集合。
+`hdfk7-boot` 是一套基于 `Spring Boot 4.1.1`、`Spring Cloud 2025.1.3`、`Spring Cloud Alibaba 2025.1.0.0` 和 `Java 21` 构建的微服务项目脚手架与 starter 集合。
 
 它不是单一业务系统，而是一个基础框架工程，主要解决三类问题：
 
@@ -22,8 +22,8 @@
 
 | 类型 | 技术 |
 | --- | --- |
-| 基础框架 | Spring Boot 4.1.0 |
-| 微服务体系 | Spring Cloud 2025.1.2 |
+| 基础框架 | Spring Boot 4.1.1 |
+| 微服务体系 | Spring Cloud 2025.1.3 |
 | 服务注册与配置 | Nacos |
 | 网关 | Spring Cloud Gateway WebFlux |
 | 服务调用 | OpenFeign、LoadBalancer |
@@ -134,6 +134,8 @@ SentinelMvcBlockExceptionHandlerAutoConfiguration
 
 其中防重复提交能力基于 Redisson 分布式锁实现，业务模块只需要继承抽象切面并声明切点，就可以复用底层锁逻辑。
 
+通用能力按类路径、Bean 和配置条件启用：雪花 ID 需要 `StringRedisTemplate` 和 `spring.application.name`；Kafka、RabbitMQ 发送器分别依赖 `KafkaTemplate`、`RabbitTemplate`；XXL-JOB 需引入客户端并显式设置 `xxl.job.enabled=true`；MyBatis-Plus 分页需引入对应 starter 和 `mybatis-plus-jsqlparser`。这些中间件依赖在通用 starter 中使用 `provided`，业务工程需按需引入。日志、防重复提交及全局异常处理提供抽象基类，需要业务工程自行继承并注册。
+
 ## 七、starter-discovery：微服务发现与网关增强
 
 `hdfk7-boot-starter-discovery` 主要面向微服务治理场景，集成了：
@@ -161,15 +163,31 @@ GatewayRouteRefreshEventListenerAutoConfiguration
 
 同时，`ScalarAutoConfiguration` 支持从服务发现中聚合接口文档，让网关可以作为统一 API 文档入口。
 
-网关示例中只需要开启配置：
+网关可在业务配置或 Nacos 中开启：
 
 ```yaml
 scalar:
+  enabled: true
   discovery:
     enabled: true
 ```
 
-即可启用服务发现模式下的文档聚合能力。
+聚合还要求 Reactive Web 环境、Gateway 和 Scalar WebFlux 依赖、DiscoveryClient 与 NacosServiceLookup Bean，以及 spring.application.name；springdoc.api-docs.enabled 不能显式关闭。
+
+聚合文档保留手动配置的 `scalar.sources`，再按服务名排序追加有健康实例的服务。默认排除网关自身，可通过 `scalar.exclude-self: false` 修改，通过 `scalar.excluded-services` 排除指定服务（忽略大小写）。如果没有显式默认源，第一个源会成为默认源。
+
+自动生成的文档 URL 为 `/{serviceId}/v3/api-docs`，后缀跟随 `springdoc.api-docs.path`，网关需提供对应路由。使用服务发现路由时配置如下：
+
+```yaml
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+```
 
 ## 八、普通服务示例
 
@@ -254,11 +272,12 @@ springdoc:
     enabled: true
     version: OPENAPI_3_0
 scalar:
+  enabled: true
   discovery:
     enabled: true
 ```
 
-当前框架使用 Springdoc OpenAPI 3.1.0。示例显式生成 OpenAPI 3.0 文档，是为了规避 Springdoc 3.1.0 在部分 OpenAPI 3.1 Schema 转换路径产生的回退 WARN；这不影响常用 Swagger 注解。后续确认兼容后，可将 `version` 改为 `OPENAPI_3_1`。
+当前 BOM 管理 Springdoc OpenAPI 3.1.1。上面的 OPENAPI_3_0 是显式选择 OpenAPI 3.0 的配置示例；仓库内网关的本地 application.yml 仅包含 Nacos 接入配置，文档和路由选项需按实际部署补充。服务发现路由开关为 spring.cloud.gateway.server.webflux.discovery.locator.enabled=true。
 
 需要注意的是，Sentinel Dashboard 默认将规则保存在客户端内存，本项目中的 Sentinel 自动配置只负责 WebMVC 和 Gateway 的限流异常返回，不负责规则持久化。生产环境应通过 Nacos 等动态数据源持久化规则，并使用 Push 模式同步到客户端。
 
@@ -311,6 +330,8 @@ example/service/src/test/java/cn/hdfk7/app/service/CodeGenerator.java
 </dependency>
 ```
 
+`spring.shardingsphere.raw` 使用 YAML `|` 块传入完整的 ShardingSphere YAML 字符串，内部 `${...}` 占位符由 Spring 环境解析。仅在没有其他 `DataSource` Bean 时创建数据源，空白内容会导致启动失败。
+
 starter 内置半年和按月分表算法，业务配置使用 `CLASS_BASED` 类型和 `STANDARD` 策略。半年算法配置如下：
 
 ```yaml
@@ -347,7 +368,7 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 
 第五，兼容较新的技术版本。
 
-项目基于 Spring Boot 4.1.0、Spring Cloud 2025.1.2 和 Java 21，适合用来探索新版本微服务项目的基础搭建方式。
+项目基于 Spring Boot 4.1.1、Spring Cloud 2025.1.3 和 Java 21，适合用来探索新版本微服务项目的基础搭建方式。
 
 ## 十三、适用场景
 
@@ -358,7 +379,7 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 3. 项目需要 Nacos、Gateway、OpenFeign、Sentinel 等微服务组件；
 4. 团队希望沉淀自己的基础 starter；
 5. 希望普通服务和网关服务有统一的异常、日志、限流返回格式；
-6. 需要一个可参考的 Spring Boot 4.1.0 微服务工程模板。
+6. 需要一个可参考的 Spring Boot 4.1.1 微服务工程模板。
 
 ## 十四、总结
 
@@ -366,4 +387,4 @@ Spring MVC 和 Gateway WebFlux 的异常处理模型不同，项目分别提供�
 
 对于业务项目来说，它的价值不是替代业务架构，而是把通用技术底座先搭好，让业务服务可以用更低成本接入微服务体系。
 
-如果你正在搭建基于 Spring Boot 4.1.0 和 Spring Cloud 2025.1.2 的微服务项目，这个项目可以作为一个不错的参考模板。
+如果你正在搭建基于 Spring Boot 4.1.1 和 Spring Cloud 2025.1.3 的微服务项目，这个项目可以作为一个不错的参考模板。
