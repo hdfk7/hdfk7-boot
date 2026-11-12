@@ -1,6 +1,6 @@
 # hdfk7-boot
 
-`hdfk7-boot` 是一套基于 Spring Boot 4.1.1、Spring Cloud 2025.1.3、Spring Cloud Alibaba 2025.1.0.0 和 Java 21 的微服务基础框架。项目通过 BOM、父 POM、公共协议模块和多个 starter 统一依赖版本与基础能力，并提供 Spring MVC 服务和 Gateway 示例。
+`hdfk7-boot` 是一套基于 Spring Boot 4.1.2、Spring Cloud 2025.1.4、Spring Cloud Alibaba 2025.1.0.0 和 Java 21 的微服务基础框架。项目通过 BOM、父 POM、公共协议模块和多个 starter 统一依赖版本与基础能力，并提供 Spring MVC 服务和 Gateway 示例。
 
 ## 功能
 
@@ -13,7 +13,7 @@
 - 统一返回结果、统一异常处理
 - 雪花算法 ID 生成器
 - 日志切面、防重复提交切面
-- Hutool、Jackson、MapStruct、Springdoc OpenAPI 3.1.1、Scalar
+- Hutool、Jackson、MapStruct、Springdoc OpenAPI 3.2.0、Scalar
 - Gateway 和普通 Web 服务示例工程
 
 ## 模块
@@ -43,17 +43,18 @@
 
 | 依赖 | 版本 |
 | --- | --- |
-| Spring Boot | `4.1.1` |
-| Spring Cloud | `2025.1.3` |
+| Spring Boot | `4.1.2` |
+| Spring Cloud | `2025.1.4` |
 | Spring Cloud Alibaba | `2025.1.0.0` |
-| Springdoc OpenAPI | `3.1.1` |
+| Springdoc OpenAPI | `3.2.0` |
 | Swagger Annotations | `2.2.55` |
-| Redisson | `4.7.0` |
+| Redisson | `4.8.0` |
 | MyBatis-Plus | `3.5.18.1` |
 | ShardingSphere | `5.5.3` |
-| Hutool | `5.8.47` |
+| Hutool | `5.8.48` |
 | MapStruct | `1.6.3` |
-| XXL-JOB | `3.4.2` |
+| XXL-JOB | `3.5.0` |
+| Flatten Maven Plugin | `1.9.0` |
 | Java | `21` |
 
 ## 使用方式
@@ -118,6 +119,8 @@ spring:
 
 通用能力按类路径、Bean 和配置条件启用：雪花 ID 需要 `StringRedisTemplate` 和 `spring.application.name`；Kafka、RabbitMQ 发送器分别依赖 `KafkaTemplate`、`RabbitTemplate`；XXL-JOB 需引入客户端并显式设置 `xxl.job.enabled=true`；MyBatis-Plus 分页需引入对应 starter 和 `mybatis-plus-jsqlparser`。这些中间件依赖在通用 starter 中使用 `provided`，业务工程需按需引入。日志、防重复提交及全局异常处理提供抽象基类，需要业务工程自行继承并注册。
 
+使用 XXL-JOB 3.5.0 时，调度中心和执行器需要配套升级。调度中心需执行数据库迁移，并为每个执行器配置与 `xxl.job.access-token` 一致的令牌。详见 [XXL-JOB 3.5.0 发布说明](https://github.com/xuxueli/xxl-job/releases/tag/3.5.0)。
+
 ## 基础配置
 
 示例工程使用 Spring Boot Config Data 导入 Nacos 配置：
@@ -138,7 +141,7 @@ spring:
       - nacos:${spring.application.name}?refreshEnabled=true
 ```
 
-当前 BOM 管理 Springdoc 3.1.1。下面是显式选择 OpenAPI 3.0 的配置示例；仓库内两个示例的本地 application.yml 仅包含 Nacos 接入配置，并未设置文档版本：
+当前 BOM 管理 Springdoc 3.2.0。以下配置显式选择 OpenAPI 3.0。仓库内两个示例的本地 application.yml 仅包含 Nacos 接入配置。
 
 ```yaml
 springdoc:
@@ -249,6 +252,8 @@ algorithmClassName: cn.hdfk7.boot.starter.shardingsphere.algorithm.HalfYearRange
 - `example/service`：普通 Web 服务示例，包含代码生成器测试入口
 
 ## 构建
+
+构建需要 Java 21 和 Maven 3.9.0 或更高版本。
 
 ```bash
 mvn -f pom.xml clean install
