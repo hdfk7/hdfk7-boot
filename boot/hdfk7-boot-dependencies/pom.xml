@@ -50,7 +50,7 @@
         <flatten-maven-plugin.version>1.8.0</flatten-maven-plugin.version>
         <swagger-annotations.version>2.2.55</swagger-annotations.version>
         <springdoc-openapi.version>3.1.1</springdoc-openapi.version>
-        <mybatis-plus.version>3.5.17</mybatis-plus.version>
+        <mybatis-plus.version>3.5.18.1</mybatis-plus.version>
         <redisson.version>4.7.0</redisson.version>
         <shardingsphere.version>5.5.3</shardingsphere.version>
         <mapstruct.version>1.6.3</mapstruct.version>

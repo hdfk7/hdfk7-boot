@@ -49,7 +49,7 @@
 | Springdoc OpenAPI | `3.1.1` |
 | Swagger Annotations | `2.2.55` |
 | Redisson | `4.7.0` |
-| MyBatis-Plus | `3.5.17` |
+| MyBatis-Plus | `3.5.18.1` |
 | ShardingSphere | `5.5.3` |
 | Hutool | `5.8.47` |
 | MapStruct | `1.6.3` |
